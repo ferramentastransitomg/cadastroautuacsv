@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>👮‍♂️ Gerador CSV para Cadastro no AUTUA por Unidade — CET-MG</title>
+<style>
+  /* ======= ESTILO GERAL ======= */
+  :root {
+    --bg-dark: #0e0e0e;
+    --bg-card: #1c1c1c;
+    --bg-input: #2a2a2a;
+    --text-light: #f1f1f1;
+    --text-muted: #b0b0b0;
+    --accent-yellow: #f8d64e;
+    --accent-yellow-hover: #ffec80;
+    --border-gray: #3a3a3a;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    --radius: 10px;
+  }
+
+  body {
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    margin: 0;
+    background: var(--bg-dark);
+    color: var(--text-light);
+    padding: 24px;
+  }
+
+  h1, h2 {
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+
+  h2 {
+    font-size: 22px;
+    color: var(--accent-yellow);
+  }
+
+  h1 {
+    font-size: 18px;
+    color: var(--text-muted);
+  }
+
+  h {
+    display: block;
+    margin-bottom: 20px;
+    font-size: 15px;
+    color: var(--text-muted);
+  }
+
+  .card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 18px;
+    box-shadow: var(--shadow);
+    margin-bottom: 18px;
+    border: 1px solid var(--border-gray);
+  }
+
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  textarea {
+    width: 100%;
+    height: 120px;
+    font-family: monospace;
+    margin-top: 6px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-gray);
+    background: var(--bg-input);
+    color: var(--text-light);
+    padding: 8px;
+  }
+
+  input[type=file] {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-muted);
+  }
+
+  select {
+    padding: 8px;
+    border-radius: var(--radius);
+    background: var(--bg-input);
+    color: var(--text-light);
+    border: 1px solid var(--border-gray);
+    font-size: 14px;
+  }
+
+  button {
+    background: var(--accent-yellow);
+    color: #111;
+    border: none;
+    padding: 8px 14px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+  }
+
+  button:hover {
+    background: var(--accent-yellow-hover);
+  }
+
+  .smallbtn {
+    background: #2a2a2a;
+    color: var(--accent-yellow);
+    padding: 6px 10px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border-gray);
+    cursor: pointer;
+    font-size: 13px;
+  }
+
+  .smallbtn:hover {
+    background: #3a3a3a;
+  }
+
+  .unit-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-gray);
+  }
+
+  .meta {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .warn {
+    color: #f0a500;
+    font-size: 13px;
+  }
+
+  .ok {
+    color: #79ff9c;
+    font-size: 13px;
+  }
+
+  .mapping {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .preview {
+    white-space: pre-wrap;
+    font-family: monospace;
+    background: #202020;
+    padding: 10px;
+    border-radius: var(--radius);
+    margin-top: 10px;
+    border: 1px solid var(--border-gray);
+    color: #e0e0e0;
+  }
+
+  .mapping select {
+    min-width: 200px;
+  }
+
+  .footer {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 24px;
+  }
+
+  .footer span {
+    color: var(--accent-yellow);
+  }
+</style>
+</head>
+<body>
+  <h2>👮‍♂️ Gerador CSV para Cadastro no AUTUA por Unidade — CET-MG</h2>
+  <h1>Envie o arquivo .CSV já tratado com máscara do CPF, sem acentos, traços ou espaços, com o cabeçalho:</h1>
+  <h>NOME | MASP | CPF | E-MAIL | UNIDADE | CELULAR</h>
+
+  <div class="card">
+    <label><b>1) Selecione o arquivo CSV (ou cole o conteúdo abaixo):</b></label>
+    <input id="fileInput" type="file" accept=".csv,text/csv" />
+    <textarea id="pasteArea" placeholder="Ou cole aqui o CSV (se não enviou arquivo)"></textarea>
+    <div style="margin-top:10px">
+      <button id="analyzeBtn">Analisar arquivo e detectar colunas</button>
+      <span class="meta" style="margin-left:10px">Suporta delimitadores: vírgula, ponto-e-vírgula, tab e pipe.</span>
+    </div>
+
+    <div id="analyzeResult" style="display:none;margin-top:16px">
+      <div class="meta">Escolha qual coluna corresponde a cada campo:</div>
+      <div class="mapping" id="mappingArea"></div>
+      <div style="margin-top:10px">
+        <button id="processBtn">Gerar arquivos por unidade</button>
+      </div>
+      <div style="margin-top:10px" class="meta">Prévia (primeiras 6 linhas):</div>
+      <div id="preview" class="preview"></div>
+    </div>
+  </div>
+
+  <div id="result" class="card" style="display:none">
+    <h2>Resultados</h2>
+    <div id="summary" class="meta"></div>
+    <div id="unitsList" style="margin-top:8px"></div>
+  </div>
+
+  <div class="footer">
+    Desenvolvido por <span>CET-MG</span> — Coordenadoria Estadual de Gestão de Trânsito
+  </div>
+
+<script>
+/* ========== UTIL ========== */
+function detectDelimiter(sampleLines){
+  const candidates = [',',';','\t','|'];
+  let best = {del: ',', score: -1};
+  for (const d of candidates){
+    const counts = sampleLines.map(l => (l.split(d).length - 1));
+    const avg = counts.reduce((a,b)=>a+b,0)/counts.length;
+    const variance = counts.reduce((a,b)=>a+Math.abs(b-avg),0)/counts.length;
+    const score = avg - variance*0.2;
+    if (score > best.score) best = {del:d, score};
+  }
+  return best.del;
+}
+
+function parseLineWithDelimiter(line, delimiter){
+  const res = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i=0;i<line.length;i++){
+    const ch = line[i];
+    if (ch === '"'){
+      if (inQuotes && line[i+1] === '"'){ cur += '"'; i++; } else { inQuotes = !inQuotes; }
+      continue;
+    }
+    if (ch === delimiter && !inQuotes){ res.push(cur); cur=''; continue; }
+    cur += ch;
+  }
+  res.push(cur);
+  return res;
+}
+
+function parseCSVWithDelimiter(text, delimiter){
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l => l.trim() !== '');
+  return lines.map(l => parseLineWithDelimiter(l, delimiter));
+}
+
+function normalizeHeaderName(name){
+  if (!name) return '';
+  const s = name.normalize ? name.normalize('NFD').replace(/[\u0300-\u036f]/g,'') : name;
+  return s.toLowerCase().replace(/[^a-z0-9]/g,'');
+}
+
+function sanitizeFilenamePart(raw){
+  if (!raw) return 'SEM_UNIDADE';
+  let s = String(raw).trim();
+  s = s.replace(/[\r\n]/g,' ').replace(/[\\/:"*?<>|]+/g,'');
+  s = s.replace(/\s+/g,' ');
+  return s || 'SEM_UNIDADE';
+}
+
+function cleanFieldForCSV(field){
+  if (field == null) return '';
+  return String(field).replace(/[\r\n]/g,' ').replace(/,/g,'').trim();
+}
+
+function todayDateStr(){
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+
+/* ========== UI HANDLERS ========== */
+
+document.getElementById('fileInput').addEventListener('change', ev => {
+  const f = ev.target.files[0];
+  if (!f) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('pasteArea').value = e.target.result;
+  };
+  reader.readAsText(f, 'utf-8');
+});
+
+document.getElementById('analyzeBtn').addEventListener('click', () => {
+  const text = document.getElementById('pasteArea').value;
+  if (!text || text.trim() === ''){ alert('Cole o conteúdo do CSV ou selecione o arquivo primeiro.'); return; }
+
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l => l.trim() !== '').slice(0,20);
+  const delimiter = detectDelimiter(lines);
+  const parsed = parseCSVWithDelimiter(text, delimiter);
+  if (parsed.length === 0){ alert('Não foi possível processar o CSV.'); return; }
+
+  const previewLines = parsed.slice(0,6).map(r => r.join(delimiter)).join('\n');
+  document.getElementById('preview').textContent = previewLines;
+
+  const firstRow = parsed[0].map(c => c.trim());
+  const normalizedFirst = firstRow.map(normalizeHeaderName);
+  const headerLike = normalizedFirst.some(n => ['nome','masp','cpf','email','e-mail','unidade','celular','telefone'].includes(n));
+
+  let headerRow = null;
+  let dataStartIndex = 0;
+  if (headerLike){
+    headerRow = firstRow;
+    dataStartIndex = 1;
+  } else {
+    headerRow = firstRow.map((_,i) => `col${i+1}`);
+    dataStartIndex = 0;
+  }
+
+  const mappingArea = document.getElementById('mappingArea');
+  mappingArea.innerHTML = '';
+  const possibleFields = [
+    {key:'masp', label:'MASP'},
+    {key:'nome', label:'NOME'},
+    {key:'cpf', label:'CPF'},
+    {key:'telefone', label:'TELEFONE / CELULAR'},
+    {key:'email', label:'EMAIL'},
+    {key:'unidade', label:'UNIDADE (para agrupar)'},
+    {key:'ignore', label:'IGNORAR'}
+  ];
+
+  for (let colIdx=0; colIdx<firstRow.length; colIdx++){
+    const colName = headerRow[colIdx] || `col${colIdx+1}`;
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'flex';
+    wrapper.style.flexDirection = 'column';
+    const lab = document.createElement('div');
+    lab.className = 'meta';
+    lab.textContent = `Col ${colIdx+1}: "${colName}"`;
+    const sel = document.createElement('select');
+    for (const opt of possibleFields){
+      const o = document.createElement('option');
+      o.value = opt.key;
+      o.textContent = opt.label;
+      sel.appendChild(o);
+    }
+    const norm = normalizeHeaderName(colName);
+    if (norm.includes('masp')) sel.value='masp';
+    else if (norm.includes('nome')) sel.value='nome';
+    else if (norm.includes('cpf')) sel.value='cpf';
+    else if (norm.includes('celular') || norm.includes('telefone')) sel.value='telefone';
+    else if (norm.includes('email') || norm.includes('e-mail')) sel.value='email';
+    else if (norm.includes('unidade') || norm.includes('setor') || norm.includes('depart')) sel.value='unidade';
+    else sel.value='ignore';
+    wrapper.appendChild(lab);
+    wrapper.appendChild(sel);
+    mappingArea.appendChild(wrapper);
+  }
+
+  window.__csv_parsed = parsed;
+  window.__csv_delimiter = delimiter;
+  window.__csv_dataStart = dataStartIndex;
+
+  document.getElementById('analyzeResult').style.display = 'block';
+  document.getElementById('result').style.display = 'none';
+});
+
+document.getElementById('processBtn').addEventListener('click', () => {
+  const parsed = window.__csv_parsed;
+  const delim = window.__csv_delimiter;
+  const dataStart = window.__csv_dataStart;
+  if (!parsed){ alert('Analise o arquivo primeiro.'); return; }
+
+  const mappingArea = document.getElementById('mappingArea');
+  const selects = mappingArea.querySelectorAll('select');
+  const map = {};
+  selects.forEach((sel, idx) => {
+    const val = sel.value;
+    if (val && val !== 'ignore') map[val] = idx;
+  });
+
+  const groups = {};
+  let totalRows = 0;
+  for (let i = dataStart; i < parsed.length; i++){
+    const row = parsed[i];
+    const getVal = (field) => (map[field] != null && map[field] < row.length) ? row[map[field]] : '';
+    const rawUnidade = getVal('unidade') ?? 'SEM_UNIDADE';
+    const unidadeKey = String(rawUnidade).trim() || 'SEM_UNIDADE';
+
+    const masp = cleanFieldForCSV(getVal('masp'));
+    const nome = cleanFieldForCSV(getVal('nome'));
+    const cpf = cleanFieldForCSV(getVal('cpf'));
+    const telefone = cleanFieldForCSV(getVal('telefone'));
+    const email = cleanFieldForCSV(getVal('email'));
+
+    const outRow = [masp, nome, cpf, telefone, email, 'T'];
+
+    if (!groups[unidadeKey]) groups[unidadeKey] = [];
+    groups[unidadeKey].push(outRow);
+    totalRows++;
+  }
+
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('analyzeResult').style.display = 'none';
+  const summary = document.getElementById('summary');
+  summary.innerHTML = `<b>Total processado:</b> ${totalRows} linhas — unidades: ${Object.keys(groups).length}`;
+
+  const unitsList = document.getElementById('unitsList');
+  unitsList.innerHTML = '';
+
+  const dateStr = todayDateStr();
+
+  for (const unitName of Object.keys(groups).sort()){
+    const rows = groups[unitName];
+    const count = rows.length;
+    const safeFileNamePart = sanitizeFilenamePart(unitName);
+    const filename = `${safeFileNamePart}_CADASTROCETMG_${dateStr}.csv`;
+    const content = rows.map(r => r.join(',')).join('\r\n');
+
+    const div = document.createElement('div');
+    div.className = 'unit-row';
+    const left = document.createElement('div');
+    left.innerHTML = `<strong>${unitName}</strong> <span class="meta">(${count} registros)</span>`;
+    div.appendChild(left);
+
+    const right = document.createElement('div');
+    const dlbtn = document.createElement('button');
+    dlbtn.textContent = 'Baixar CSV';
+    dlbtn.addEventListener('click', ()=> downloadFile(filename, content));
+    right.appendChild(dlbtn);
+
+    const previewBtn = document.createElement('button');
+    previewBtn.className = 'smallbtn';
+    previewBtn.style.marginLeft = '8px';
+    previewBtn.textContent = 'Visualizar 8 linhas';
+    previewBtn.addEventListener('click', ()=>{
+      const prev = rows.slice(0,8).map(r => r.join(',')).join('\n');
+      alert(`Preview — ${unitName} (${count} registros):\n\n${prev || '(vazio)'}`);
+    });
+    right.appendChild(previewBtn);
+
+    div.appendChild(right);
+    unitsList.appendChild(div);
+  }
+
+  function downloadFile(filename, content){
+    const blob = new Blob([content], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=> URL.revokeObjectURL(url), 1000);
+  }
+});
+</script>
+</body>
+</html>
