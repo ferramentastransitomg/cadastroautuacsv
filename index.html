@@ -3,177 +3,219 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>👮‍♂️ Gerador CSV para Cadastro no AUTUA por Unidade — CET-MG</title>
+<title>Suite de App's Cadastro AUTUA</title>
 <style>
-/* ======= ESTILO GERAL ======= */
-:root {
-  --bg-dark: #0e0e0e;
-  --bg-card: #1c1c1c;
-  --bg-input: #2a2a2a;
-  --text-light: #f1f1f1;
-  --text-muted: #b0b0b0;
-  --accent-yellow: #f8d64e;
-  --accent-yellow-hover: #ffec80;
-  --border-gray: #3a3a3a;
-  --shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --radius: 10px;
-}
-body {
-  font-family: "Segoe UI", Roboto, Arial, sans-serif;
-  margin: 0;
-  background: var(--bg-dark);
-  color: var(--text-light);
-  padding: 24px;
-}
-h1, h2 {
-  margin: 0 0 8px;
-  font-weight: 600;
-}
-h2 {
-  font-size: 22px;
-  color: var(--accent-yellow);
-}
-h1 {
-  font-size: 18px;
-  color: var(--text-muted);
-}
-h {
-  display: block;
-  margin-bottom: 20px;
-  font-size: 15px;
-  color: var(--text-muted);
-}
-.card {
-  background: var(--bg-card);
-  border-radius: var(--radius);
-  padding: 18px;
-  box-shadow: var(--shadow);
-  margin-bottom: 18px;
-  border: 1px solid var(--border-gray);
-}
-label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-textarea {
-  width: 100%;
-  height: 120px;
-  font-family: monospace;
-  margin-top: 6px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-gray);
-  background: var(--bg-input);
-  color: var(--text-light);
-  padding: 8px;
-}
-input[type=file] {
-  display: block;
-  margin-bottom: 10px;
-  color: var(--text-muted);
-}
-select {
-  padding: 8px;
-  border-radius: var(--radius);
-  background: var(--bg-input);
-  color: var(--text-light);
-  border: 1px solid var(--border-gray);
-  font-size: 14px;
-}
-button {
-  background: var(--accent-yellow);
-  color: #111;
-  border: none;
-  padding: 8px 14px;
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.2s;
-}
-button:hover {
-  background: var(--accent-yellow-hover);
-}
-.smallbtn {
-  background: #2a2a2a;
-  color: var(--accent-yellow);
-  padding: 6px 10px;
-  border-radius: var(--radius);
-  border: 1px solid var(--border-gray);
-  cursor: pointer;
-  font-size: 13px;
-}
-.smallbtn:hover {
-  background: #3a3a3a;
-}
-.unit-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 0;
-  border-bottom: 1px solid var(--border-gray);
-}
-.meta { font-size: 13px; color: var(--text-muted); }
-.preview {
-  white-space: pre-wrap;
-  font-family: monospace;
-  background: #202020;
-  padding: 10px;
-  border-radius: var(--radius);
-  margin-top: 10px;
-  border: 1px solid var(--border-gray);
-  color: #e0e0e0;
-}
-.mapping select { min-width: 200px; }
-.footer {
-  text-align: center;
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-top: 24px;
-}
-.footer span { color: var(--accent-yellow); }
+  :root{
+    --bg-dark:#0b0b0b; --card-dark:#141414; --muted-dark:#bdbdbd; --accent:#1a73e8; --glass: rgba(255,255,255,0.02);
+    --bg-light:#ffffff; --card-light:#f7f9ff; --muted-light:#555; --accent-light:#1a73e8;
+    --radius:10px;
+    --transition: 250ms ease;
+  }
+  html,body{height:100%;}
+  body{
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+    margin:0;padding:18px; transition: background var(--transition), color var(--transition);
+    background:var(--bg-dark); color:#eee;
+  }
+  header{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  h1{margin:0;font-size:20px}
+  .toolbar{margin-left:auto;display:flex;gap:8px;align-items:center}
+  .btn{background:var(--accent);color:#fff;padding:10px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700;transition:transform .12s}
+  .btn:active{transform:translateY(1px)}
+  .btn.secondary{background:transparent;color:var(--accent);border:1px solid rgba(255,255,255,0.06)}
+  .container{margin-top:18px;padding:14px;border-radius:var(--radius);box-shadow:0 6px 18px rgba(0,0,0,0.5); transition: background var(--transition), color var(--transition), border var(--transition) }
+  .hidden{display:none}
+  .grid{display:grid;grid-template-columns:1fr 340px;gap:12px}
+  textarea, input[type="text"], input[type="number"], select{width:100%;padding:8px;border-radius:8px;background:transparent;border:1px solid rgba(255,255,255,0.06);color:inherit}
+  label{display:block;color:var(--muted);margin-bottom:6px;font-weight:700}
+  .preview{background:transparent;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);font-family:monospace;color:inherit;white-space:pre-wrap}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:6px;border:1px solid rgba(255,255,255,0.04);font-size:13px}
+  th{background:var(--accent);color:#fff;position:sticky;top:0}
+  .footer{margin-top:14px;color:var(--muted);font-size:13px;text-align:center}
+  .unit-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.04)}
+  .small{font-size:13px;color:var(--muted)}
+  .actions{display:flex;gap:8px}
+  .copy-line{background:var(--accent);color:#fff;border:none;padding:6px 8px;border-radius:8px;cursor:pointer;font-weight:700}
+  /* initial description box */
+  .intro{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:18px;border-radius:12px}
+  .theme-toggle{border-radius:10px;padding:8px 10px;border:1px solid rgba(255,255,255,0.06);cursor:pointer;background:transparent;color:inherit}
+  /* light theme */
+  body.light{
+    background:var(--bg-light); color:var(--muted-light);
+  }
+  body.light .container{background:var(--card-light); color:var(--muted-light); box-shadow: 0 6px 18px rgba(26,115,232,0.06); border:1px solid rgba(26,115,232,0.06)}
+  body.light .btn{color:#fff}
+  body.light .btn.secondary{color:var(--accent); border:1px solid rgba(26,115,232,0.12)}
+  body.light input, body.light textarea, body.light select { background: #fff; border:1px solid rgba(26,115,232,0.08); color:var(--muted-light) }
+  body.light .preview{border:1px solid rgba(26,115,232,0.04); background:#fff}
+  /* responsive */
+  @media (max-width:900px){
+    .grid{grid-template-columns:1fr}
+    .toolbar{width:100%;justify-content:flex-start}
+  }
 </style>
 </head>
 <body>
-<h2>👮‍♂️ Gerador CSV para Cadastro no AUTUA por Unidade — CET-MG</h2>
-<h1>Envie o arquivo .CSV já tratado com máscara do CPF, sem acentos, traços ou espaços, com o cabeçalho:</h1>
-<h>NOME | MASP | CPF | E-MAIL | UNIDADE | CELULAR</h>
 
-<div class="card">
-  <label><b>1) Selecione o arquivo CSV (ou cole o conteúdo abaixo):</b></label>
-  <input id="fileInput" type="file" accept=".csv,text/csv" />
-  <textarea id="pasteArea" placeholder="Ou cole aqui o CSV (se não enviou arquivo)"></textarea>
-  <div style="margin-top:10px">
-    <button id="analyzeBtn">Analisar arquivo e detectar colunas</button>
-    <span class="meta" style="margin-left:10px">Suporta delimitadores: vírgula, ponto-e-vírgula, tab e pipe.</span>
+<style>
+  .toolbar .btn:nth-child(-n+3) {
+    display: none;
+  }
+</style>
+
+<header>
+  <h1>🚓 Suite de App's Cadastro AUTUA</h1>
+  <div class="toolbar">
+    <button class="btn" id="btnShowMerge">Juntar CSV</button>
+    <button class="btn" id="btnShowGerador">Gerador CSV por Unidade</button>
+    <button class="btn" id="btnShowCPF">Gerador de CPF</button>
+    <button class="theme-toggle" id="themeToggle">🌓 Tema</button>
   </div>
-  <div id="analyzeResult" style="display:none;margin-top:16px">
-    <div class="meta">Escolha qual coluna corresponde a cada campo:</div>
-    <div class="mapping" id="mappingArea"></div>
-    <div style="margin-top:10px">
-      <button id="processBtn">Gerar arquivos por unidade</button>
+</header>
+
+<!-- Intro / instruction -->
+<section id="intro" class="container intro" style="margin-top:14px">
+  <div>
+    <div style="font-weight:800;font-size:16px">Escolha um aplicativo</div>
+    <div class="small" style="margin-top:8px;max-width:820px">Clique no botão ao lado para usar o aplicativo desejado. Cada aplicativo abrirá sozinho — quando terminar, volte aqui para escolher outro.</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
+    <div class="small">Apps disponíveis</div>
+    <div style="display:flex;gap:8px">
+      <button class="btn" id="introMerge">Abrir Juntar CSV</button>
+      <button class="btn" id="introGerador">Abrir Gerador por Unidade</button>
+      <button class="btn" id="introCPF">Abrir Gerador CPF</button>
     </div>
-    <div style="margin-top:10px" class="meta">Prévia (primeiras 6 linhas):</div>
-    <div id="preview" class="preview"></div>
   </div>
-</div>
+</section>
 
-<div id="result" class="card" style="display:none">
-  <h2>Resultados</h2>
-  <div id="summary" class="meta"></div>
-  <div id="bulkDownload" style="margin-top:10px; display:none;">
-    <button id="downloadAllBtn">Baixar todos os arquivos</button>
-    <button id="downloadZipBtn" style="margin-left:8px;">Baixar ZIP com todos</button>
-    <span class="meta" style="margin-left:8px">Pode demorar alguns segundos.</span>
+<!-- APP: Juntar CSV (Editor + export CSV / Excel) -->
+<section id="appMerge" class="container hidden" style="margin-top:14px">
+  <h2 style="margin-top:0;color:var(--accent)">📂 Juntar Erros Cadastro RADAR</h2>
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
+    <div style="flex:1">
+      <label>Selecione arquivos CSV (múltiplos):</label>
+      <input id="mergeFiles" type="file" multiple accept=".csv,text/csv,.xls" style="width:550px">
+      <div style="margin-top:10px">
+        <label>Nome do arquivo de exportação</label>
+        <input id="mergeExportName" type="text" value="erros_radar" style="width:535px">
+      </div>
+      <div style="margin-top:10px;display:flex;gap:80px">
+        <button class="btn secondary" id="mergeDownloadCSV">⬇️ Baixar CSV</button>
+        <button class="btn" id="mergeDownloadXLS">⬇️ Baixar Excel (.xls)</button>
+        <button class="btn secondary" id="backFromMerge">↩ Voltar</button>
+      </div>
+    </div>
+    <div style="width:1000px">
+      <div class="small">Visualização</div>
+      <div id="mergeStats" class="preview" style="height:120px;overflow:auto">Nenhum arquivo carregado.</div>
+    </div>
   </div>
-  <div id="unitsList" style="margin-top:8px"></div>
-</div>
 
-<div class="footer">Desenvolvido por <span>CET-MG</span> — Coordenadoria Estadual de Gestão de Trânsito</div>
+  <div style="margin-top:12px">
+    <div id="mergePreview" style="max-height:420px;overflow:auto;border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:8px"></div>
+  </div>
+  <div class="footer">Edição inline de células: clique e altere — tudo processado localmente.</div>
+</section>
 
-<!-- JSZip para compactar os arquivos -->
-<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<!-- APP: Gerador CSV por Unidade -->
+<section id="appGerador" class="container hidden" style="margin-top:14px">
+  <h2 style="margin-top:0;color:var(--accent)">👮‍♂️ Gerador CSV por Unidade — CET-MG (AUTUA)</h2>
+  <div class="grid">
+    <div>
+      <label>1) Cole o CSV aqui ou selecione o arquivo (aceita colagem direta do Excel)</label>
+      <input id="unitFile" type="file" accept=".csv,text/csv" />
+      <textarea id="unitPaste" placeholder="Cole aqui (CTRL+V) uma seleção do Excel ou CSV separado por vírgula / ; / tab / |" style="min-height:300px"></textarea>
 
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button class="btn" id="unitAnalyze">Analisar e detectar colunas</button>
+        <button class="btn secondary" id="unitProcess">Gerar arquivos por unidade</button>
+        <button class="btn secondary" id="backFromGerador">↩ Voltar</button>
+      </div>
+
+      <div id="analyzeResult" class="hidden" style="margin-top:12px">
+        <div class="small">Mapeie as colunas detectadas (ajuste se necessário)</div>
+        <div id="mappingArea" style="margin-top:6px"></div>
+      </div>
+
+      <div id="resultBlock" class="hidden" style="margin-top:12px">
+        <h3 style="margin:6px 0;color:var(--muted)">Resultados</h3>
+        <div id="summary" class="small"></div>
+        <div style="margin-top:8px" id="unitsList"></div>
+        <div style="margin-top:10px">
+          <button class="btn" id="downloadAllUnits">Baixar todos os CSV (downloads separados)</button>
+          <button class="btn" id="downloadZipUnits">Baixar ZIP com todos</button>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="small">Prévia (primeiras linhas)</div>
+      <div id="unitPreview" class="preview" style="height:300px;overflow:auto">Sem dados</div>
+    </div>
+  </div>
+  <div class="footer">Formato requerido sugerido: NOME | MASP | CPF | E-MAIL | UNIDADE | CELULAR (mas o mapeador detecta automaticamente).</div>
+<style>
+  /* Reduz e iguala o tamanho das duas colunas do Gerador CSV */
+  #appGerador .grid {
+    display: grid;
+    grid-template-columns: 800px 800px; /* mesmos tamanhos */
+    gap: 40px; /* espaço entre os dois */
+  }
+
+  /* Garante que os campos ocupem toda a largura da coluna */
+  #appGerador input,
+  #appGerador textarea,
+  #appGerador .preview {
+    width: 100% !important;
+  }
+
+</style>
+</section>
+
+<!-- APP: Gerador CPF -->
+<section id="appCPF" class="container hidden" style="margin-top:14px">
+  <h2 style="margin-top:0;color:var(--accent)">🔢 Gerador de CPFs Válidos — 1 por vez</h2>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <div style="flex:1;min-width:220px">
+      <label>CPF de entrada (mín. 9 dígitos)</label>
+      <input id="inputCpf" type="text" placeholder="Ex: 07964609614" maxlength="20" />
+    </div>
+    <div style="width:120px">
+      <label>Resultados</label>
+      <input id="numResults" type="number" value="6" min="1" max="50" />
+    </div>
+    <div style="width:160px">
+      <label>Modo</label>
+      <select id="aggressiveness">
+        <option value="1">1 - rápido</option>
+        <option value="2" selected>2 - equilibrado</option>
+        <option value="3">3 - máximo</option>
+      </select>
+    </div>
+    <div style="display:flex;gap:8px;align-items:flex-end">
+      <button class="btn" id="btnGenerate">Gerar</button>
+      <button class="btn secondary" id="btnClear">Limpar</button>
+      <button class="btn secondary" id="btnExport">Exportar CSV</button>
+      <button class="btn secondary" id="backFromCPF">↩ Voltar</button>
+    </div>
+  </div>
+
+  <div id="resultsArea" style="margin-top:12px"></div>
+  <div class="footer">Clique em "Copiar" para copiar o CPF (sem máscara) para a área de transferência.</div>
+</section>
+
+<!-- Scripts -->
 <script>
+/* ======== UTILITÁRIOS COMUNS ======== */
+function onlyDigits(s){ return (s||'').toString().replace(/\D+/g,''); }
+function formatCPF(s){ s=onlyDigits(s); if(s.length!==11) return s; return s.slice(0,3)+'.'+s.slice(3,6)+'.'+s.slice(6,9)+'-'+s.slice(9); }
+function todayDateStr(){ const d=new Date(); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; }
+function downloadBlob(blob, filename){ const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); }
+function escapeHtml(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ======== CSV PARSERS ======== */
 function detectDelimiter(sampleLines){
   const candidates=[',',';','\t','|'];
   let best={del:',',score:-1};
@@ -181,241 +223,599 @@ function detectDelimiter(sampleLines){
     const counts=sampleLines.map(l=>(l.split(d).length-1));
     const avg=counts.reduce((a,b)=>a+b,0)/counts.length;
     const variance=counts.reduce((a,b)=>a+Math.abs(b-avg),0)/counts.length;
-    const score=avg-variance*0.2;
+    const score=avg - variance*0.2;
     if(score>best.score) best={del:d,score};
   }
   return best.del;
 }
-function parseLineWithDelimiter(line,delimiter){
-  const res=[];let cur='';let inQuotes=false;
+function parseLineCSV(line, delimiter){
+  const out=[]; let cur=''; let inQuotes=false;
   for(let i=0;i<line.length;i++){
     const ch=line[i];
     if(ch==='"'){
-      if(inQuotes&&line[i+1]==='"'){cur+='"';i++;}
-      else inQuotes=!inQuotes;
-      continue;
+      if(inQuotes && line[i+1]==='"'){ cur+='"'; i++; continue; }
+      inQuotes=!inQuotes; continue;
     }
-    if(ch===delimiter&&!inQuotes){res.push(cur);cur='';continue;}
+    if(ch===delimiter && !inQuotes){ out.push(cur); cur=''; continue; }
     cur+=ch;
   }
-  res.push(cur);
-  return res;
+  out.push(cur);
+  return out;
 }
-function parseCSVWithDelimiter(text,delimiter){
+function parseCSVGeneric(text){
+  // wrapper used by merge app (keeps previous behavior)
+  if(!text) return [];
   const lines=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l=>l.trim()!=='');
-  return lines.map(l=>parseLineWithDelimiter(l,delimiter));
+  const sample = lines.slice(0, Math.min(20, lines.length));
+  const delim = detectDelimiter(sample);
+  return lines.map(l=>parseLineCSV(l, delim));
 }
-function normalizeHeaderName(name){
-  if(!name)return'';
-  const s=name.normalize?name.normalize('NFD').replace(/[\u0300-\u036f]/g,''):name;
-  return s.toLowerCase().replace(/[^a-z0-9]/g,'');
-}
-function sanitizeFilenamePart(raw){
-  if(!raw)return'SEM_UNIDADE';
-  let s=String(raw).trim();
-  s=s.replace(/[\r\n]/g,' ').replace(/[\\/:"*?<>|]+/g,'');
-  s=s.replace(/\s+/g,' ');
-  return s||'SEM_UNIDADE';
-}
-function cleanFieldForCSV(field){
-  if(field==null)return'';
-  return String(field).replace(/[\r\n]/g,' ').replace(/,/g,'').trim();
-}
-function todayDateStr(){
-  const d=new Date();
-  const yyyy=d.getFullYear();
-  const mm=String(d.getMonth()+1).padStart(2,'0');
-  const dd=String(d.getDate()).padStart(2,'0');
-  return `${yyyy}-${mm}-${dd}`;
-}
-document.getElementById('fileInput').addEventListener('change',ev=>{
-  const f=ev.target.files[0];
-  if(!f)return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    document.getElementById('pasteArea').value=e.target.result;
-  };
-  reader.readAsText(f,'utf-8');
-});
 
-document.getElementById('analyzeBtn').addEventListener('click',()=>{
-  const text=document.getElementById('pasteArea').value;
-  if(!text.trim()){alert('Cole o conteúdo do CSV ou selecione o arquivo primeiro.');return;}
-  const lines=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').split('\n').filter(l=>l.trim()!=='').slice(0,20);
-  const delimiter=detectDelimiter(lines);
-  const parsed=parseCSVWithDelimiter(text,delimiter);
-  if(parsed.length===0){alert('Não foi possível processar o CSV.');return;}
-  const previewLines=parsed.slice(0,6).map(r=>r.join(delimiter)).join('\n');
-  document.getElementById('preview').textContent=previewLines;
-  const firstRow=parsed[0].map(c=>c.trim());
-  const normalizedFirst=firstRow.map(normalizeHeaderName);
-  const headerLike=normalizedFirst.some(n=>['nome','masp','cpf','email','e-mail','unidade','celular','telefone'].includes(n));
-  let headerRow=null;let dataStartIndex=0;
-  if(headerLike){headerRow=firstRow;dataStartIndex=1;}
-  else{headerRow=firstRow.map((_,i)=>`col${i+1}`);dataStartIndex=0;}
-  const mappingArea=document.getElementById('mappingArea');
-  mappingArea.innerHTML='';
-  const possibleFields=[
-    {key:'masp',label:'MASP'},
-    {key:'nome',label:'NOME'},
-    {key:'cpf',label:'CPF'},
-    {key:'telefone',label:'TELEFONE / CELULAR'},
-    {key:'email',label:'EMAIL'},
-    {key:'unidade',label:'UNIDADE (para agrupar)'},
-    {key:'ignore',label:'IGNORAR'}
-  ];
-  for(let colIdx=0;colIdx<firstRow.length;colIdx++){
-    const colName=headerRow[colIdx]||`col${colIdx+1}`;
-    const wrapper=document.createElement('div');
-    wrapper.style.display='flex';
-    wrapper.style.flexDirection='column';
-    const lab=document.createElement('div');
-    lab.className='meta';
-    lab.textContent=`Col ${colIdx+1}: "${colName}"`;
-    const sel=document.createElement('select');
-    for(const opt of possibleFields){
-      const o=document.createElement('option');
-      o.value=opt.key;o.textContent=opt.label;
-      sel.appendChild(o);
-    }
-    const norm=normalizeHeaderName(colName);
-    if(norm.includes('masp'))sel.value='masp';
-    else if(norm.includes('nome'))sel.value='nome';
-    else if(norm.includes('cpf'))sel.value='cpf';
-    else if(norm.includes('celular')||norm.includes('telefone'))sel.value='telefone';
-    else if(norm.includes('email')||norm.includes('e-mail'))sel.value='email';
-    else if(norm.includes('unidade')||norm.includes('setor')||norm.includes('depart'))sel.value='unidade';
-    else sel.value='ignore';
-    wrapper.appendChild(lab);
-    wrapper.appendChild(sel);
-    mappingArea.appendChild(wrapper);
-  }
-  window.__csv_parsed=parsed;
-  window.__csv_delimiter=delimiter;
-  window.__csv_dataStart=dataStartIndex;
-  document.getElementById('analyzeResult').style.display='block';
-  document.getElementById('result').style.display='none';
-});
+/* ======== APP 1 (MERGE) ======== */
+(function prepareMergeApp(){
+  const fileInput = document.getElementById('mergeFiles');
+  const previewDiv = document.getElementById('mergePreview');
+  const stats = document.getElementById('mergeStats');
+  const downloadCSVBtn = document.getElementById('mergeDownloadCSV');
+  const downloadXLSBtn = document.getElementById('mergeDownloadXLS');
+  const exportNameInput = document.getElementById('mergeExportName');
+  const backBtn = document.getElementById('backFromMerge');
 
-document.getElementById('processBtn').addEventListener('click',()=>{
-  const parsed=window.__csv_parsed;
-  const delim=window.__csv_delimiter;
-  const dataStart=window.__csv_dataStart;
-  if(!parsed){alert('Analise o arquivo primeiro.');return;}
-  const mappingArea=document.getElementById('mappingArea');
-  const selects=mappingArea.querySelectorAll('select');
-  const map={};
-  selects.forEach((sel,idx)=>{
-    const val=sel.value;
-    if(val&&val!=='ignore')map[val]=idx;
-  });
-  const groups={};
-  let totalRows=0;
-  for(let i=dataStart;i<parsed.length;i++){
-    const row=parsed[i];
-    const getVal=field=>(map[field]!=null&&map[field]<row.length)?row[map[field]]:'';
-    const rawUnidade=getVal('unidade')??'SEM_UNIDADE';
-    const unidadeKey=String(rawUnidade).trim()||'SEM_UNIDADE';
-    const masp=cleanFieldForCSV(getVal('masp'));
-    const nome=cleanFieldForCSV(getVal('nome'));
-    const cpf=cleanFieldForCSV(getVal('cpf'));
-    const telefone=cleanFieldForCSV(getVal('telefone'));
-    const email=cleanFieldForCSV(getVal('email'));
-    const outRow=[masp,nome,cpf,telefone,email,'T'];
-    if(!groups[unidadeKey])groups[unidadeKey]=[];
-    groups[unidadeKey].push(outRow);
-    totalRows++;
-  }
-  document.getElementById('result').style.display='block';
-  document.getElementById('analyzeResult').style.display='none';
-  const summary=document.getElementById('summary');
-  summary.innerHTML=`<b>Total processado:</b> ${totalRows} linhas — unidades: ${Object.keys(groups).length}`;
-  const unitsList=document.getElementById('unitsList');
-  unitsList.innerHTML='';
-  const dateStr=todayDateStr();
-  window.__csv_groups=groups; 
-  const bulkDownload=document.getElementById('bulkDownload');
-  bulkDownload.style.display='block';
-  for(const unitName of Object.keys(groups).sort()){
-    const rows=groups[unitName];
-    const count=rows.length;
-    const safeFileNamePart=sanitizeFilenamePart(unitName);
-    const filename=`${safeFileNamePart}_CADASTROCETMG_${dateStr}.csv`;
-    const content=rows.map(r=>r.join(',')).join('\r\n');
-    const div=document.createElement('div');
-    div.className='unit-row';
-    const left=document.createElement('div');
-    left.innerHTML=`<strong>${unitName}</strong> <span class="meta">(${count} registros)</span>`;
-    div.appendChild(left);
-    const right=document.createElement('div');
-    const dlbtn=document.createElement('button');
-    dlbtn.textContent='Baixar CSV';
-    dlbtn.addEventListener('click',()=>downloadFile(filename,content));
-    right.appendChild(dlbtn);
-    const previewBtn=document.createElement('button');
-    previewBtn.className='smallbtn';
-    previewBtn.style.marginLeft='8px';
-    previewBtn.textContent='Visualizar 8 linhas';
-    previewBtn.addEventListener('click',()=>{
-      const prev=rows.slice(0,8).map(r=>r.join(',')).join('\n');
-      alert(`Preview — ${unitName} (${count} registros):\n\n${prev||'(vazio)'}`);
+  let combinedData = []; let maxCols = 0;
+
+  fileInput.addEventListener('change', e=> {
+    const files = Array.from(e.target.files || []);
+    if(files.length===0) { stats.textContent='Nenhum arquivo.'; previewDiv.innerHTML=''; return; }
+    combinedData=[]; maxCols=0;
+    stats.textContent = `Lendo ${files.length} arquivo(s) ...`;
+    let processed=0;
+    files.forEach(file=>{
+      const reader=new FileReader();
+      reader.onload = evt=>{
+        const text = evt.target.result;
+        const parsed = parseCSVGeneric(text);
+        parsed.forEach(row=>{
+          const r = row.slice(); r.push(file.name);
+          maxCols = Math.max(maxCols, r.length);
+          combinedData.push(r);
+        });
+        processed++;
+        if(processed===files.length) renderTable();
+      };
+      reader.readAsText(file,'utf-8');
     });
-    right.appendChild(previewBtn);
-    div.appendChild(right);
-    unitsList.appendChild(div);
-  }
-  function downloadFile(filename,content){
-    const blob=new Blob([content],{type:'text/csv;charset=utf-8;'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    a.href=url;a.download=filename;
-    document.body.appendChild(a);a.click();a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),1000);
-  }
-  document.getElementById('downloadAllBtn').onclick=function(){
-    const allGroups=window.__csv_groups||{};
-    const dateStr=todayDateStr();
-    const keys=Object.keys(allGroups);
-    let delay=0;
-    for(const unitName of keys){
-      const rows=allGroups[unitName];
-      const safeFileNamePart=sanitizeFilenamePart(unitName);
-      const filename=`${safeFileNamePart}_CADASTROCETMG_${dateStr}.csv`;
-      const content=rows.map(r=>r.join(',')).join('\r\n');
-      setTimeout(()=>downloadFile(filename,content),delay);
-      delay+=500;
-    }
-  };
-});
+  });
 
-// === Função para gerar e baixar o ZIP ===
-document.getElementById('downloadZipBtn').addEventListener('click', async ()=>{
-  const allGroups = window.__csv_groups || {};
-  const dateStr = todayDateStr();
-  const zip = new JSZip();
-  const keys = Object.keys(allGroups);
-  if (keys.length === 0) {
-    alert('Nenhum arquivo gerado ainda.');
-    return;
+  function renderTable(){
+    let html = '<table><thead><tr>';
+    for(let i=0;i<maxCols-1;i++) html += `<th>Col ${i+1}</th>`;
+    html += `<th>Origem</th></tr></thead><tbody>`;
+    combinedData.forEach((row,rIdx)=>{
+      html += `<tr>`;
+      for(let c=0;c<maxCols;c++){
+        const val = row[c] ?? '';
+        const editable = (c===maxCols-1) ? 'contenteditable="false"' : 'contenteditable="true"';
+        html += `<td ${editable} data-row="${rIdx}" data-col="${c}">${escapeHtml(val)}</td>`;
+      }
+      html += `</tr>`;
+    });
+    html += `</tbody></table>`;
+    previewDiv.innerHTML = html;
+    stats.textContent = `Linhas: ${combinedData.length} — Colunas: ${maxCols}`;
+    previewDiv.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
+      td.addEventListener('input', e=>{
+        const r = parseInt(td.dataset.row), c = parseInt(td.dataset.col);
+        combinedData[r][c] = td.innerText;
+      });
+    });
   }
-  for (const unitName of keys) {
-    const rows = allGroups[unitName];
-    const safeFileNamePart = sanitizeFilenamePart(unitName);
-    const filename = `${safeFileNamePart}_CADASTROCETMG_${dateStr}.csv`;
-    const content = rows.map(r => r.join(',')).join('\r\n');
-    zip.file(filename, content);
+
+  downloadCSVBtn.addEventListener('click', ()=>{
+    if(combinedData.length===0){ alert('Nada para exportar'); return; }
+    const rows = combinedData.map(r=> r.map(cell=> `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+    const name = (exportNameInput.value.trim()||'erros_radar') + '_' + todayDateStr() + '.csv';
+    const blob = new Blob([rows], { type:'text/csv;charset=utf-8;' });
+    downloadBlob(blob, name);
+  });
+
+  downloadXLSBtn.addEventListener('click', ()=>{
+    if(combinedData.length===0){ alert('Nada para exportar'); return; }
+    let html = '<table border="1">';
+    html += '<thead><tr>';
+    for(let i=0;i<maxCols-1;i++) html += `<th>Col ${i+1}</th>`;
+    html += `<th>Origem</th></tr></thead><tbody>`;
+    combinedData.forEach(r=>{
+      html += '<tr>';
+      for(let i=0;i<maxCols;i++) html += `<td>${escapeHtml(r[i] ?? '')}</td>`;
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    const name = (exportNameInput.value.trim()||'erros_radar') + '_' + todayDateStr() + '.xls';
+    const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+    downloadBlob(blob, name);
+  });
+
+  backBtn.addEventListener('click', ()=>{
+    hideAllApps(); document.getElementById('intro').classList.remove('hidden');
+  });
+
+  window._mergeApp = { getData: ()=>combinedData };
+})();
+
+/* ======== APP 2 (GERADOR POR UNIDADE) ======== */
+(function prepareUnitApp(){
+  const fileInput = document.getElementById('unitFile');
+  const pasteArea = document.getElementById('unitPaste');
+  const analyzeBtn = document.getElementById('unitAnalyze');
+  const processBtn = document.getElementById('unitProcess');
+  const mappingArea = document.getElementById('mappingArea');
+  const preview = document.getElementById('unitPreview');
+  const analyzeResult = document.getElementById('analyzeResult');
+  const resultBlock = document.getElementById('resultBlock');
+  const summary = document.getElementById('summary');
+  const unitsList = document.getElementById('unitsList');
+  const downloadAllBtn = document.getElementById('downloadAllUnits');
+  const downloadZipBtn = document.getElementById('downloadZipUnits');
+  const backBtn = document.getElementById('backFromGerador');
+
+  let parsedCSV = null; let delimiterUsed = ','; let dataStartIndex = 0;
+
+  // Parse robust: accepts TAB (Excel), comma, semicolon, pipe
+  function parseCSVForUnit(text){
+    if(!text) return [];
+    const clean = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+    // If has TAB -> treat as TSV (Excel)
+    if(clean.indexOf('\t') !== -1){
+      return clean.split('\n').filter(l=>l.trim()!=='').map(l=>l.split('\t'));
+    }
+    // otherwise detect delimiter
+    const lines = clean.split('\n').filter(l=>l.trim()!=='');
+    const sample = lines.slice(0, Math.min(20, lines.length));
+    const delim = detectDelimiter(sample);
+    return lines.map(l=>parseLineCSV(l, delim));
   }
-  const blob = await zip.generateAsync({ type: "blob" });
-  const zipFilename = `CETMG_CADASTROS_${dateStr}.zip`;
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = zipFilename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-});
+
+  fileInput.addEventListener('change', e=>{
+    const f = e.target.files[0];
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = ev => { pasteArea.value = ev.target.result; };
+    reader.readAsText(f,'utf-8');
+  });
+
+  // helper: basic heuristics to detect field type from header text & sample content
+  function scoreColumn(colIndex, headerText, sampleRows){
+    const header = (headerText||'').toLowerCase();
+    let score = {masp:0, nome:0, cpf:0, telefone:0, email:0, unidade:0};
+    // header cues
+    if(/masp|matr|matricul|rg|registro/.test(header)) score.masp += 10;
+    if(/nome|nomecompleto|full ?name/.test(header)) score.nome += 10;
+    if(/cpf/.test(header)) score.cpf += 10;
+    if(/tel|cel|celular|fone|telefone/.test(header)) score.telefone += 10;
+    if(/email|e-?mail/.test(header)) score.email += 10;
+    if(/unid|setor|depart|lotação|lotacao|local|org|orgao/.test(header)) score.unidade += 10;
+
+    // sample content cues
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const cpfRe = /^\d{3}\.?\d{3}\.?\d{3}-?\d{2}$/;
+    const maspRe = /^\d{4,9}$/;
+    const phoneRe = /^(?:\+55)?\s*\(?\d{2}\)?\s*\d{4,5}[-\s]?\d{4}$/;
+    let textNameLikeCount = 0;
+
+    for(let r=0;r<Math.min(12,sampleRows.length);r++){
+      const val = (sampleRows[r][colIndex]||'').toString().trim();
+      if(!val) continue;
+      if(emailRe.test(val)) score.email += 6;
+      if(cpfRe.test(val)) score.cpf += 6;
+      if(maspRe.test(val) && val.length>=4 && val.length<=9) score.masp += 4;
+      if(phoneRe.test(val)) score.telefone += 5;
+      // names: if contains spaces and letters-only
+      if(/^[A-Za-zÀ-ú'\.\- ]+$/.test(val) && val.split(' ').length>=2) textNameLikeCount++;
+      // unidade: often contains words like 'CET', 'SETRAN', 'NÚCLEO' or numbers + text
+      if(/\b(cet|setran|nucleo|núcleo|regional|sede|posto|unidade)\b/i.test(val)) score.unidade += 4;
+    }
+    if(textNameLikeCount >= 3) score.nome += 6;
+    return score;
+  }
+
+  // Choose best mapping for columns using header + sample
+  function autoMapColumns(parsed){
+    const firstRow = parsed[0] || [];
+    const sampleRows = parsed.slice( dataStartIndex || 1, Math.min(parsed.length, 50) );
+    const mapGuess = {}; // field -> colIndex
+    const scoresPerCol = [];
+
+    for(let c=0;c<firstRow.length;c++){
+      const h = firstRow[c] || '';
+      scoresPerCol[c] = scoreColumn(c, h, parsed);
+    }
+    const fields = ['cpf','masp','nome','email','telefone','unidade'];
+    fields.forEach(field=>{
+      let bestIdx = -1; let bestScore = -1;
+      for(let c=0;c<scoresPerCol.length;c++){
+        const s = scoresPerCol[c][field] || 0;
+        if(s>bestScore){ bestScore=s; bestIdx=c; }
+      }
+      if(bestScore>0) mapGuess[field]=bestIdx;
+    });
+    return mapGuess;
+  }
+
+  analyzeBtn.addEventListener('click', ()=>{
+    const text = pasteArea.value || '';
+    if(!text.trim()){ alert('Cole o conteúdo do CSV ou selecione o arquivo primeiro.'); return; }
+
+    parsedCSV = parseCSVForUnit(text);
+    if(parsedCSV.length===0){ alert('Não foi possível processar o CSV'); return; }
+
+    // detect delimiter used
+    if(text.indexOf('\t')!==-1) delimiterUsed = '\t';
+    else {
+      const lines = text.split('\n').filter(l=>l.trim()!=='').slice(0,20);
+      delimiterUsed = detectDelimiter(lines);
+    }
+
+    const firstRow = parsedCSV[0].map(c=>String(c).trim());
+    // header detection: if many non-numeric -> treat as header
+    const normalized = firstRow.map(n=> normalizeHeaderName(n) );
+    const looksHeader = normalized.some(n=> ['nome','masp','cpf','email','unidade','celular','telefone'].includes(n));
+    dataStartIndex = looksHeader ? 1 : 0;
+
+    // auto-map using heuristics
+    const autoMap = autoMapColumns(parsedCSV);
+
+    // build mapping UI
+    mappingArea.innerHTML = '';
+    const possible = [
+      {key:'masp', label:'MASP'},
+      {key:'nome', label:'NOME'},
+      {key:'cpf', label:'CPF'},
+      {key:'telefone', label:'TELEFONE / CELULAR'},
+      {key:'email', label:'EMAIL'},
+      {key:'unidade', label:'UNIDADE (agrupamento)'},
+      {key:'ignore', label:'IGNORAR'}
+    ];
+
+    for(let i=0;i<firstRow.length;i++){
+      const colName = firstRow[i] || `col${i+1}`;
+      const wrap = document.createElement('div'); wrap.style.margin='6px 0';
+      const lab = document.createElement('div'); lab.className='small'; lab.textContent = `Col ${i+1}: "${colName}"`;
+
+      const sel = document.createElement('select');
+      sel.style.marginTop='6px';
+      possible.forEach(opt=>{
+        const o = document.createElement('option'); o.value=opt.key; o.textContent=opt.label; sel.appendChild(o);
+      });
+
+      // choose default by autoMap or header normalization
+      if(autoMap.cpf === i) sel.value='cpf';
+      else if(autoMap.masp === i) sel.value='masp';
+      else if(autoMap.nome === i) sel.value='nome';
+      else if(autoMap.email === i) sel.value='email';
+      else if(autoMap.telefone === i) sel.value='telefone';
+      else if(autoMap.unidade === i) sel.value='unidade';
+      else {
+        const norm = normalizeHeaderName(colName);
+        if(norm.includes('masp')) sel.value='masp';
+        else if(norm.includes('nome')) sel.value='nome';
+        else if(norm.includes('cpf')) sel.value='cpf';
+        else if(norm.includes('celular')||norm.includes('telefone')) sel.value='telefone';
+        else if(norm.includes('email')) sel.value='email';
+        else if(norm.includes('unidade')||norm.includes('setor')||norm.includes('depart')) sel.value='unidade';
+        else sel.value='ignore';
+      }
+
+      wrap.appendChild(lab); wrap.appendChild(sel); mappingArea.appendChild(wrap);
+    }
+
+    analyzeResult.classList.remove('hidden');
+    preview.textContent = parsedCSV.slice(0,8).map(r=> r.join(delimiterUsed)).join('\n');
+    resultBlock.classList.add('hidden');
+  });
+
+  // Helper small cleans
+  function cleanFieldForCSV(field){ if(field==null) return ''; return String(field).replace(/[\r\n]/g,' ').replace(/,/g,'').trim(); }
+  function sanitizeFilenamePart(raw){ if(!raw) return 'SEM_UNIDADE'; let s = String(raw).trim(); s = s.replace(/[\r\n]/g,' ').replace(/[\\/:"*?<>|]+/g,''); s = s.replace(/\s+/g,' '); return s || 'SEM_UNIDADE'; }
+
+  processBtn.addEventListener('click', ()=>{
+    if(!parsedCSV){ alert('Analise o arquivo primeiro'); return; }
+    const selects = mappingArea.querySelectorAll('select');
+    const map = {};
+    selects.forEach((sel,idx)=> { if(sel.value && sel.value!=='ignore') map[sel.value] = idx; });
+    const groups = {}; let total=0; const dateStr = todayDateStr();
+
+    for(let i=dataStartIndex;i<parsedCSV.length;i++){
+      const row = parsedCSV[i];
+      const getVal = (fld) => (map[fld]!=null && map[fld] < row.length) ? row[map[fld]] : '';
+      const rawUnidade = (getVal('unidade') || 'SEM_UNIDADE').toString().trim() || 'SEM_UNIDADE';
+      const unidadeKey = rawUnidade;
+      const masp = cleanFieldForCSV(getVal('masp'));
+      const nome = cleanFieldForCSV(getVal('nome'));
+      const cpf = cleanFieldForCSV(getVal('cpf'));
+      const telefone = cleanFieldForCSV(getVal('telefone'));
+      const email = cleanFieldForCSV(getVal('email'));
+      const outRow = [masp,nome,cpf,telefone,email,'T'];
+      if(!groups[unidadeKey]) groups[unidadeKey] = [];
+      groups[unidadeKey].push(outRow);
+      total++;
+    }
+
+    // show results
+    resultBlock.classList.remove('hidden');
+    summary.innerHTML = `<b>Total processado:</b> ${total} linhas — unidades: ${Object.keys(groups).length}`;
+    unitsList.innerHTML = '';
+    const date = dateStr;
+    window.__csv_groups = groups;
+
+    for(const unit of Object.keys(groups).sort()){
+      const rows = groups[unit]; const count = rows.length;
+      const safe = sanitizeFilenamePart(unit);
+      const filename = `${safe}_CADASTROCETMG_${date}.csv`;
+      const div = document.createElement('div'); div.className='unit-row';
+      const left = document.createElement('div'); left.innerHTML = `<strong>${unit}</strong> <div class="small">(${count} registros)</div>`;
+      const right = document.createElement('div'); right.className='actions';
+      const dl = document.createElement('button'); dl.className='btn secondary'; dl.textContent='Baixar CSV';
+      dl.addEventListener('click', ()=> { const content = rows.map(r=>r.join(',')).join('\r\n'); downloadBlob(new Blob([content],{type:'text/csv'}), filename); });
+      const pv = document.createElement('button'); pv.className='btn secondary'; pv.textContent='Visualizar 8 linhas';
+      pv.addEventListener('click', ()=> { alert(`Preview — ${unit} (${count} registros):\n\n${rows.slice(0,8).map(r=>r.join(',')).join('\n')}`); });
+      right.appendChild(dl); right.appendChild(pv);
+      div.appendChild(left); div.appendChild(right); unitsList.appendChild(div);
+    }
+
+    downloadAllBtn.onclick = function(){
+      const all = window.__csv_groups || {};
+      for(const unitName of Object.keys(all)){
+        const safe = sanitizeFilenamePart(unitName);
+        const filename = `${safe}_CADASTROCETMG_${date}.csv`;
+        const content = all[unitName].map(r=> r.join(',')).join('\r\n');
+        setTimeout(()=> downloadBlob(new Blob([content],{type:'text/csv'}), filename), 200);
+      }
+    };
+
+    downloadZipBtn.onclick = function(){
+      const all = window.__csv_groups || {};
+      const files = [];
+      for(const unitName of Object.keys(all)){
+        const safe = sanitizeFilenamePart(unitName);
+        const filename = `${safe}_CADASTROCETMG_${date}.csv`;
+        const content = all[unitName].map(r=> r.join(',')).join('\r\n');
+        files.push({ name: filename, content: new TextEncoder().encode(content) });
+      }
+      if(files.length===0){ alert('Nenhum arquivo gerado'); return; }
+      const blob = makeZip(files); // STORE (sem compressao)
+      downloadBlob(blob, `CETMG_CADASTROS_${date}.zip`);
+    };
+  });
+
+  backBtn.addEventListener('click', ()=>{ hideAllApps(); document.getElementById('intro').classList.remove('hidden'); });
+
+  /* ===== ZIP (STORE - sem compressão) ===== */
+  function makeZip(files){
+    function crc32(buf){
+      let table = crc32.table;
+      if(!table){
+        table = new Uint32Array(256);
+        for(let i=0;i<256;i++){
+          let c=i;
+          for(let k=0;k<8;k++) c = ((c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1));
+          table[i]=c>>>0;
+        }
+        crc32.table = table;
+      }
+      let crc = 0 ^ (-1);
+      for(let i=0;i<buf.length;i++){
+        crc = (crc >>> 8) ^ table[(crc ^ buf[i]) & 0xFF];
+      }
+      return (crc ^ (-1)) >>> 0;
+    }
+    function u32(n){ return [n & 0xff, (n>>>8)&0xff, (n>>>16)&0xff, (n>>>24)&0xff]; }
+    function u16(n){ return [n & 0xff, (n>>>8)&0xff]; }
+
+    let localFiles = []; let central = []; let offset = 0;
+    for(const f of files){
+      const nameBuf = new TextEncoder().encode(f.name);
+      const data = f.content;
+      const crc = crc32(data);
+      const compSize = data.length;
+      const localHeader = [
+        0x50,0x4b,0x03,0x04,
+        ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0),
+        ...u32(crc), ...u32(compSize), ...u32(compSize),
+        ...u16(nameBuf.length), ...u16(0)
+      ];
+      const localHeaderBuf = new Uint8Array(localHeader.length + nameBuf.length + data.length);
+      localHeaderBuf.set(localHeader, 0);
+      localHeaderBuf.set(nameBuf, localHeader.length);
+      localHeaderBuf.set(data, localHeader.length + nameBuf.length);
+      localFiles.push(localHeaderBuf);
+      const cent = [
+        0x50,0x4b,0x01,0x02,
+        ...u16(0x0314), ...u16(20), ...u16(0), ...u16(0), ...u16(0), ...u16(0),
+        ...u32(crc), ...u32(compSize), ...u32(compSize),
+        ...u16(nameBuf.length), ...u16(0), ...u16(0), ...u16(0),
+        ...u16(0), ...u32(0), ...u32(offset)
+      ];
+      const centBuf = new Uint8Array(cent.length + nameBuf.length);
+      centBuf.set(cent,0); centBuf.set(nameBuf, cent.length);
+      central.push(centBuf);
+      offset += localHeaderBuf.length;
+    }
+    let centralSize = central.reduce((s,b)=>s+b.length,0);
+    let centralOffset = offset;
+    const out = new Uint8Array(offset + centralSize + 22);
+    let pos = 0;
+    for(const lf of localFiles){ out.set(lf,pos); pos += lf.length; }
+    for(const cd of central){ out.set(cd,pos); pos += cd.length; }
+    const eocd = [
+      0x50,0x4b,0x05,0x06,
+      ...u16(0), ...u16(0),
+      ...u16(central.length), ...u16(central.length),
+      ...u32(centralSize), ...u32(centralOffset), ...u16(0)
+    ];
+    out.set(eocd,pos); pos += eocd.length;
+    return new Blob([out], { type: 'application/zip' });
+  }
+
+})();
+
+/* ======== APP 3 (CPF) ======== */
+(function prepareCPFApp(){
+  const neighbors = {
+    '0': ['9','8'], '1': ['2','7'], '2': ['1','3'], '3': ['2','4'],
+    '4': ['3','5'], '5': ['4','6'], '6': ['5','7','9'], '7': ['6','8','1'],
+    '8': ['7','9','0'], '9': ['8','6']
+  };
+  function validaCPF(cpf){
+    cpf = onlyDigits(cpf);
+    if(cpf.length !== 11) return false;
+    if(/^([0-9])\1{10}$/.test(cpf)) return false;
+    const nums = cpf.split('').map(d=>parseInt(d));
+    let s1 = 0; for(let i=0;i<9;i++) s1 += (10-i)*nums[i];
+    let r1 = s1 % 11; let d1 = (r1 < 2) ? 0 : 11 - r1;
+    let s2 = 0; for(let i=0;i<9;i++) s2 += (11-i)*nums[i]; s2 += 2*d1;
+    let r2 = s2 % 11; let d2 = (r2 < 2) ? 0 : 11 - r2;
+    return d1===nums[9] && d2===nums[10];
+  }
+  function calcDigitsFor9(cpf9){
+    const a = cpf9.split('').map(Number);
+    let s1=0; for(let i=0;i<9;i++) s1 += (10-i)*a[i]; let r1=s1%11; let d1=(r1<2)?0:11-r1;
+    let s2=0; for(let i=0;i<9;i++) s2 += (11-i)*a[i]; s2 += 2*d1; let r2=s2%11; let d2=(r2<2)?0:11-r2;
+    return ''+d1+d2;
+  }
+  function generateCandidates(orig, maxResults, agg){
+    orig = onlyDigits(orig);
+    if(orig.length<9) return [];
+    const base9 = orig.slice(0,9);
+    const results = new Set();
+    results.add(base9 + calcDigitsFor9(base9));
+    for(let i=0;i<11 && results.size<maxResults*(agg+1);i++){
+      for(let d=0; d<10 && results.size<maxResults*(agg+1); d++){
+        const cand = orig.slice(0,i) + d + orig.slice(i+1);
+        if(cand.length===11 && validaCPF(cand)) results.add(cand);
+      }
+    }
+    for(let i=0;i<10 && results.size<maxResults*(agg+1);i++){
+      const s = orig.split(''); [s[i],s[i+1]]=[s[i+1],s[i]]; const cand = s.join('');
+      if(validaCPF(cand)) results.add(cand);
+    }
+    for(let i=0;i<9 && results.size<maxResults*(agg+1);i++){
+      const ch = base9[i]; const neigh = neighbors[ch]||[];
+      for(const n of neigh){
+        const new9 = base9.slice(0,i)+n+base9.slice(i+1);
+        const cand = new9 + calcDigitsFor9(new9);
+        if(validaCPF(cand)) results.add(cand);
+      }
+    }
+    if(agg>1){
+      for(let i=0;i<11 && results.size<maxResults*(agg+1);i++){
+        let s = orig.slice(0,i)+orig.slice(i+1);
+        if(s.length===10) s = '0'+s;
+        if(s.length===11 && validaCPF(s)) results.add(s);
+      }
+    }
+    const arr = Array.from(results);
+    arr.sort((a,b)=>{
+      let da=0, db=0; for(let i=0;i<11;i++){ if(a[i]!==orig[i]) da++; if(b[i]!==orig[i]) db++; }
+      if(da!==db) return da-db; return a.localeCompare(b);
+    });
+    return arr.slice(0, maxResults);
+  }
+
+  const btn = document.getElementById('btnGenerate');
+  const btnClear = document.getElementById('btnClear');
+  const btnExport = document.getElementById('btnExport');
+  const inputCpf = document.getElementById('inputCpf');
+  const resultsArea = document.getElementById('resultsArea');
+  const backBtn = document.getElementById('backFromCPF');
+
+  btn.addEventListener('click', ()=>{
+    const cpf = inputCpf.value.trim();
+    const n = parseInt(document.getElementById('numResults').value)||6;
+    const agg = parseInt(document.getElementById('aggressiveness').value)||2;
+    resultsArea.innerHTML = '';
+    if(!onlyDigits(cpf) || onlyDigits(cpf).length<9){
+      resultsArea.innerHTML = '<p class="small" style="text-align:center;color:inherit">Insira ao menos 9 dígitos do CPF.</p>';
+      return;
+    }
+    const cands = generateCandidates(cpf, n, agg);
+    if(cands.length===0){
+      resultsArea.innerHTML = '<p class="small" style="text-align:center;color:inherit">Nenhum candidato válido encontrado.</p>'; return;
+    }
+    let html = '<table><thead><tr><th>#</th><th>CPF</th><th>Ação</th></tr></thead><tbody>';
+    cands.forEach((c,i)=>{
+      html += `<tr><td style="text-align:center">${i+1}</td><td>${formatCPF(c)}</td><td class="actions"><button class="copy-line" data-cpf="${c}">Copiar</button><span class="copied-check" style="margin-left:8px; color:#00ff88; font-weight:800; visibility:hidden">✅</span></td></tr>`;
+    });
+    html += '</tbody></table>';
+    resultsArea.innerHTML = html;
+    resultsArea.querySelectorAll('.copy-line').forEach(btnLine=>{
+      btnLine.addEventListener('click', async ()=>{
+        const clean = btnLine.dataset.cpf;
+        try{ await navigator.clipboard.writeText(clean); const span = btnLine.parentElement.querySelector('.copied-check'); if(span) span.style.visibility = 'visible'; }
+        catch(e){ alert('Não foi possível copiar automaticamente.'); }
+      });
+    });
+  });
+
+  btnClear.addEventListener('click', ()=>{ inputCpf.value=''; resultsArea.innerHTML=''; });
+
+  btnExport.addEventListener('click', ()=>{
+    const cpf = onlyDigits(inputCpf.value.trim());
+    const n = parseInt(document.getElementById('numResults').value)||6;
+    const agg = parseInt(document.getElementById('aggressiveness').value)||2;
+    const cands = generateCandidates(cpf, n, agg);
+    if(cands.length===0){ alert('Nenhum candidato para exportar'); return; }
+    let csv = 'cpf_validado\n' + cands.map(c=>formatCPF(c)).join('\n');
+    const blob = new Blob([csv],{type:'text/csv'}); downloadBlob(blob, 'cpfs_candidatos.csv');
+  });
+
+  backBtn.addEventListener('click', ()=>{ hideAllApps(); document.getElementById('intro').classList.remove('hidden'); });
+})();
+
+/* ======== NAV + THEME ======== */
+(function navAndTheme(){
+  const apps = { merge: document.getElementById('appMerge'), gerador: document.getElementById('appGerador'), cpf: document.getElementById('appCPF') };
+  const intro = document.getElementById('intro');
+  function hideAllApps(){ Object.values(apps).forEach(n=>n.classList.add('hidden')); intro.classList.add('hidden'); }
+  window.hideAllApps = hideAllApps;
+
+  function showApp(name){
+    hideAllApps();
+    intro.classList.add('hidden');
+    apps[name].classList.remove('hidden');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  document.getElementById('btnShowMerge').addEventListener('click', ()=> showApp('merge'));
+  document.getElementById('btnShowGerador').addEventListener('click', ()=> showApp('gerador'));
+  document.getElementById('btnShowCPF').addEventListener('click', ()=> showApp('cpf'));
+
+  document.getElementById('introMerge').addEventListener('click', ()=> showApp('merge'));
+  document.getElementById('introGerador').addEventListener('click', ()=> showApp('gerador'));
+  document.getElementById('introCPF').addEventListener('click', ()=> showApp('cpf'));
+
+  // Theme toggle
+  const themeToggle = document.getElementById('themeToggle');
+  const body = document.body;
+  const storeKey = 'suite_autua_theme';
+  function applyTheme(t){
+    if(t === 'light'){ body.classList.add('light'); }
+    else { body.classList.remove('light'); }
+    localStorage.setItem(storeKey, t);
+  }
+  // init from storage or default dark
+  const saved = localStorage.getItem(storeKey) || 'dark';
+  applyTheme(saved);
+  themeToggle.addEventListener('click', ()=>{
+    const cur = body.classList.contains('light') ? 'light' : 'dark';
+    const next = cur === 'light' ? 'dark' : 'light';
+    applyTheme(next);
+  });
+})();
+
+/* ======== HELPERS GLOBAIS ======== */
+function normalizeHeaderName(name){ if(!name) return ''; const s = name.normalize ? name.normalize('NFD').replace(/[\u0300-\u036f]/g,'') : name; return s.toLowerCase().replace(/[^a-z0-9]/g,''); }
 </script>
+
 </body>
 </html>
+
