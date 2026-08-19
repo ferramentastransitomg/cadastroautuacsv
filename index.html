@@ -320,7 +320,7 @@ function repairMojibake(value){
     const codes=Array.from(s).map(ch=>ch.charCodeAt(0));
     if(codes.some(n=>n>255)) return s;
     const repaired=new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(codes));
-    return repaired.includes(' ') ? s : repaired;
+    return repaired.includes('�') ? s : repaired;
   }catch(e){ return s; }
 }
 function decodeTextBuffer(buffer){
@@ -1030,3 +1030,4 @@ function normalizeHeaderName(name){ if(!name) return ''; const s = name.normaliz
 
 </body>
 </html>
+
