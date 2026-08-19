@@ -121,9 +121,36 @@
   body.light th{background:#dcefe6;color:#0b5d43}
   @media (max-width:1050px){.work-grid{grid-template-columns:1fr}.app-launchers{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:620px){header{padding:12px 14px}.container{margin:14px;padding:14px}.mapping-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr}.button-row .btn{width:100%}}
+
+  .version-badge{
+    position:fixed;
+    top:10px;
+    right:12px;
+    z-index:9999;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:.4px;
+    opacity:.55;
+    color:var(--muted-dark);
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:999px;
+    padding:4px 7px;
+    user-select:none;
+    pointer-events:none;
+    backdrop-filter:blur(4px);
+  }
+  body.light .version-badge{
+    color:#315b4c;
+    background:rgba(15,92,67,.05);
+    border-color:rgba(15,92,67,.12);
+    opacity:.72;
+  }
 </style>
 </head>
 <body>
+<div class="version-badge" aria-label="Versão do aplicativo">v3.0</div>
+
 
 <style>
   .toolbar .btn:nth-child(-n+3) {
@@ -399,34 +426,50 @@ function parseCSVGeneric(text){
   }
 
   function detectHeaderMap(firstRow){
+    // IMPORTANTE: esta detecção pertence somente ao Juntar Erros.
+    // Ela reconhece nomes de cabeçalho, nunca palavras soltas dentro dos dados.
+    // Assim mensagens como "Este CPF já está cadastrado;Esta matrícula já está cadastrada"
+    // não podem ser confundidas com as colunas CPF ou matrícula.
     const map={};
+    const aliases={
+      matricula:new Set(['matricula','masp','registro','matriculamasp','maspmatricula']),
+      nome:new Set(['nome','nomecompleto']),
+      cpf:new Set(['cpf','numerocpf','cpfnumero']),
+      celular:new Set(['celular','telefone','fone','telefonecelular','celulartelefone']),
+      email:new Set(['email','emailinstitucional','enderecodeemail']),
+      erro:new Set(['erro','mensagem','mensagemdeerro','retorno','motivodoerro']),
+      unidade:new Set(['unidade']),
+      origem:new Set(['origem','arquivoorigem','arquivodeorigem'])
+    };
     (firstRow||[]).forEach((value,idx)=>{
       const n=normalizeHeaderName(value);
-      if(/^(matricula|matrícula|masp|registro)$/.test(n)||n.includes('matricula')||n.includes('masp')) map.matricula=idx;
-      else if(n==='nome'||n.includes('nomecompleto')) map.nome=idx;
-      else if(n==='cpf'||n.includes('cpf')) map.cpf=idx;
-      else if(n.includes('celular')||n.includes('telefone')||n==='fone') map.celular=idx;
-      else if(n.includes('email')) map.email=idx;
-      else if(n.includes('erro')||n.includes('mensagem')||n.includes('retorno')) map.erro=idx;
-      else if(n==='origem'||n.includes('arquivoorigem')) map.origem=idx;
+      for(const [key,values] of Object.entries(aliases)){
+        if(values.has(n)){ map[key]=idx; break; }
+      }
     });
     return map;
   }
 
   function normalizeIncoming(parsed, fallbackOrigin){
     if(!parsed.length) return [];
-    const headerMap=detectHeaderMap(parsed[0]);
-    const known=Object.keys(headerMap).length;
+    const detectedHeaderMap=detectHeaderMap(parsed[0]);
+    const known=Object.keys(detectedHeaderMap).length;
     const hasHeader=known>=2;
+
+    // Regra de segurança do Juntar Erros:
+    // sem cabeçalho reconhecido, o retorno RADAR/AUTUA é SEMPRE posicional:
+    // 1 matrícula | 2 nome | 3 CPF | 4 celular | 5 e-mail | 6 erro.
+    // Nenhum conteúdo da coluna "erro" participa do mapeamento.
+    const headerMap=hasHeader ? detectedHeaderMap : {};
     const rows=hasHeader ? parsed.slice(1) : parsed;
 
     return rows.filter(r=>r.some(v=>String(v??'').trim()!=='')).map(row=>{
       const get=(key,pos)=>{
-        const idx=headerMap[key];
+        const idx=hasHeader ? headerMap[key] : null;
         return repairMojibake(idx!=null ? (row[idx]??'') : (row[pos]??''));
       };
       let origem='';
-      if(headerMap.origem!=null) origem=repairMojibake(row[headerMap.origem]??'');
+      if(hasHeader && headerMap.origem!=null) origem=repairMojibake(row[headerMap.origem]??'');
       else if(!hasHeader && row.length>=8) origem=repairMojibake(row[7]??'');
       else if(!hasHeader && row.length===7) origem=repairMojibake(row[6]??'');
       if(!origem.trim()) origem=repairMojibake(fallbackOrigin||'COLAGEM_MANUAL');
