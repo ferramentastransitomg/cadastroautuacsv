@@ -6,8 +6,8 @@
 <title>Suite de App's Cadastro AUTUA</title>
 <style>
   :root{
-    --bg-dark:#0b0b0b; --card-dark:#141414; --muted-dark:#bdbdbd; --accent:#1a73e8; --glass: rgba(255,255,255,0.02);
-    --bg-light:#ffffff; --card-light:#f7f9ff; --muted-light:#555; --accent-light:#1a73e8;
+    --bg-dark:#07110d; --card-dark:#0d1813; --muted-dark:#b8c8c0; --accent:#0f7a5a; --glass: rgba(255,255,255,0.02);
+    --bg-light:#f3f8f5; --card-light:#ffffff; --muted-light:#46574f; --accent-light:#0f7a5a;
     --radius:10px;
     --transition: 250ms ease;
   }
@@ -44,16 +44,83 @@
   body.light{
     background:var(--bg-light); color:var(--muted-light);
   }
-  body.light .container{background:var(--card-light); color:var(--muted-light); box-shadow: 0 6px 18px rgba(26,115,232,0.06); border:1px solid rgba(26,115,232,0.06)}
+  body.light .container{background:var(--card-light); color:var(--muted-light); box-shadow: 0 6px 18px rgba(15,122,90,0.08); border:1px solid rgba(15,122,90,0.08)}
   body.light .btn{color:#fff}
-  body.light .btn.secondary{color:var(--accent); border:1px solid rgba(26,115,232,0.12)}
-  body.light input, body.light textarea, body.light select { background: #fff; border:1px solid rgba(26,115,232,0.08); color:var(--muted-light) }
-  body.light .preview{border:1px solid rgba(26,115,232,0.04); background:#fff}
+  body.light .btn.secondary{color:var(--accent); border:1px solid rgba(15,122,90,0.18)}
+  body.light input, body.light textarea, body.light select { background: #fff; border:1px solid rgba(15,122,90,0.12); color:var(--muted-light) }
+  body.light .preview{border:1px solid rgba(15,122,90,0.07); background:#fff}
   /* responsive */
   @media (max-width:900px){
     .grid{grid-template-columns:1fr}
     .toolbar{width:100%;justify-content:flex-start}
   }
+
+  /* ===== Interface 2026 / fluxo orientado a colagem ===== */
+  :root{
+    --panel:#0e1a14; --panel-2:#09130f; --line:rgba(204,235,220,.12);
+    --text:#f1f8f4; --muted:#9db3a8; --accent-2:#43c092;
+    --success:#22c55e; --warning:#f59e0b; --danger:#ef4444;
+  }
+  *{box-sizing:border-box}
+  body{padding:0;background:linear-gradient(180deg,#06100c 0%,#0a1711 100%);color:var(--text)}
+  header{position:sticky;top:0;z-index:30;padding:14px 24px;background:rgba(6,16,12,.93);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  header h1{font-size:18px;letter-spacing:-.2px}
+  .toolbar{gap:6px}
+  .theme-toggle{min-height:40px}
+  main,.page-shell{max-width:1500px;margin:0 auto}
+  .container{max-width:1500px;margin-left:auto;margin-right:auto;background:var(--panel);border:1px solid var(--line);box-shadow:0 18px 50px rgba(0,0,0,.24);padding:22px}
+  .intro{margin-top:22px!important;align-items:stretch;background:linear-gradient(135deg,rgba(15,122,90,.20),rgba(67,192,146,.05))}
+  .app-launchers{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:12px;width:100%;margin-top:18px}
+  .app-card{padding:18px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.025);cursor:pointer;transition:.18s ease;text-align:left;color:inherit}
+  .app-card:hover{transform:translateY(-2px);border-color:rgba(67,192,146,.52);background:rgba(67,192,146,.08)}
+  .app-card strong{display:block;font-size:15px;margin-bottom:6px}
+  .app-card span{display:block;color:var(--muted);font-size:13px;line-height:1.45}
+  .section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+  .section-title h2{margin:0!important;font-size:20px!important;color:var(--text)!important}
+  .eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.12em;color:var(--accent-2);font-weight:800;margin-bottom:5px}
+  .work-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(360px,.9fr);gap:18px;align-items:start}
+  .panel{background:var(--panel-2);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .panel + .panel{margin-top:12px}
+  .panel-title{font-weight:800;margin-bottom:5px}
+  .panel-help{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:12px}
+  label{color:var(--text);font-size:13px;margin-bottom:7px}
+  textarea,input[type=text],input[type=number],select,input[type=file]{border:1px solid var(--line);background:#07110d;color:var(--text);min-height:42px;padding:10px 12px;outline:none;transition:.16s ease}
+  textarea:focus,input:focus,select:focus{border-color:rgba(67,192,146,.82);box-shadow:0 0 0 3px rgba(67,192,146,.14)}
+  textarea{resize:vertical;line-height:1.45}
+  .paste-primary{min-height:245px!important;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:12.5px}
+  .btn{min-height:40px;padding:9px 14px;border-radius:9px;box-shadow:none}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.secondary{border-color:var(--line);color:#d6efe4;background:rgba(255,255,255,.025)}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid transparent}
+  .btn.danger{background:transparent;border:1px solid rgba(239,68,68,.35);color:#ff9b9b}
+  .button-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .button-row.end{justify-content:flex-end}
+  .divider{height:1px;background:var(--line);margin:14px 0}
+  .drop-secondary{padding:13px;border:1px dashed rgba(255,255,255,.16);border-radius:12px;background:rgba(255,255,255,.015)}
+  .drop-secondary input[type=file]{width:100%;background:transparent;border:0;padding:4px;min-height:auto}
+  .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+  .stat{padding:12px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.025)}
+  .stat b{display:block;font-size:20px;margin-bottom:3px}
+  .stat span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .preview{border-color:var(--line);background:#07110d}
+  .table-wrap{max-height:480px;overflow:auto;border:1px solid var(--line);border-radius:12px;background:#07110d}
+  table{min-width:900px}
+  th{background:#123126;border-color:rgba(255,255,255,.08);padding:9px 8px;text-align:left}
+  td{border-color:rgba(255,255,255,.055);padding:8px}
+  td[contenteditable=true]:focus{outline:2px solid rgba(67,192,146,.68);outline-offset:-2px;background:rgba(67,192,146,.07)}
+  .mapping-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .mapping-item{padding:10px;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.02)}
+  .flow-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.22);color:#86efac;font-size:11px;font-weight:800}
+  .status-line{min-height:20px;margin-top:8px;font-size:12px;color:var(--muted)}
+  .toast{position:fixed;right:22px;bottom:22px;z-index:100;padding:11px 14px;border-radius:10px;background:#103025;border:1px solid var(--line);box-shadow:0 16px 44px rgba(0,0,0,.34);font-size:13px;opacity:0;transform:translateY(10px);pointer-events:none;transition:.18s ease}
+  .toast.show{opacity:1;transform:translateY(0)}
+  .footer{color:var(--muted)}
+  body.light{--panel:#ffffff;--panel-2:#f4f8f6;--line:rgba(14,91,66,.14);--text:#17382c;--muted:#5d746a;background:#edf5f1;color:var(--text)}
+  body.light header{background:rgba(255,255,255,.92)}
+  body.light textarea,body.light input,body.light select,body.light .preview,body.light .table-wrap{background:#fff;color:var(--text)}
+  body.light th{background:#dcefe6;color:#0b5d43}
+  @media (max-width:1050px){.work-grid{grid-template-columns:1fr}.app-launchers{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:620px){header{padding:12px 14px}.container{margin:14px;padding:14px}.mapping-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr}.button-row .btn{width:100%}}
 </style>
 </head>
 <body>
@@ -75,103 +142,127 @@
 </header>
 
 <!-- Intro / instruction -->
-<section id="intro" class="container intro" style="margin-top:14px">
-  <div>
-    <div style="font-weight:800;font-size:16px">Escolha um aplicativo</div>
-    <div class="small" style="margin-top:8px;max-width:820px">Clique no botão ao lado para usar o aplicativo desejado. Cada aplicativo abrirá sozinho — quando terminar, volte aqui para escolher outro.</div>
-  </div>
-  <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end">
-    <div class="small">Apps disponíveis</div>
-    <div style="display:flex;gap:8px">
-      <button class="btn" id="introMerge">Abrir Juntar CSV</button>
-      <button class="btn" id="introGerador">Abrir Gerador por Unidade</button>
-      <button class="btn" id="introCPF">Abrir Gerador CPF</button>
+<section id="intro" class="container intro">
+  <div style="width:100%">
+    <div class="eyebrow">AUTUA · Ferramentas locais</div>
+    <div style="font-weight:850;font-size:24px;letter-spacing:-.5px">Suite de Cadastro AUTUA</div>
+    <div class="small" style="margin-top:8px;max-width:850px;line-height:1.55">Escolha a tarefa. O fluxo foi reorganizado para priorizar colagem direta do Excel/CSV, com upload de arquivo como alternativa. Todo o processamento continua acontecendo somente no navegador.</div>
+    <div class="app-launchers">
+      <button class="app-card" id="introMerge"><strong>📂 Juntar erros</strong><span>Consolide retornos do RADAR, cole dados ou carregue vários arquivos e exporte com origem.</span></button>
+      <button class="app-card" id="introGerador"><strong>👮 Gerar por unidade</strong><span>Cole a planilha, revise o mapeamento automático e gere os CSVs de cada unidade.</span></button>
+      <button class="app-card" id="introCPF"><strong>🔢 Corrigir CPF</strong><span>Gere candidatos de CPF válidos para tratar erros de digitação.</span></button>
     </div>
   </div>
 </section>
 
 <!-- APP: Juntar CSV (Editor + export CSV / Excel) -->
-<section id="appMerge" class="container hidden" style="margin-top:14px">
-  <h2 style="margin-top:0;color:var(--accent)">📂 Juntar Erros Cadastro RADAR</h2>
-  <div style="display:flex;gap:12px;flex-wrap:wrap">
-    <div style="flex:1">
-      <label>Selecione arquivos CSV (múltiplos):</label>
-      <input id="mergeFiles" type="file" multiple accept=".csv,text/csv,.xls" style="width:550px">
-      <div style="margin-top:10px">
-        <label>Nome do arquivo de exportação</label>
-        <input id="mergeExportName" type="text" value="erros_radar" style="width:535px">
+<section id="appMerge" class="container hidden">
+  <div class="section-title">
+    <div><div class="eyebrow">Tratamento de retorno</div><h2>📂 Juntar Erros Cadastro RADAR</h2></div>
+    <button class="btn ghost" id="backFromMerge">← Voltar ao início</button>
+  </div>
+
+  <div class="work-grid">
+    <div>
+      <div class="panel">
+        <div class="panel-title">1. Cole os dados <span class="flow-badge">Fluxo recomendado</span></div>
+        <div class="panel-help">Cole diretamente do Excel ou de um CSV. Se os dados não tiverem a coluna <b>Origem</b>, informe abaixo um nome que identifique o lote.</div>
+        <label for="mergePasteOrigin">Origem da colagem</label>
+        <input id="mergePasteOrigin" type="text" value="COLAGEM_MANUAL" placeholder="Ex.: 01RPM_CADASTRO_2026-08-19.csv">
+        <div style="height:8px"></div>
+        <textarea id="mergePaste" class="paste-primary" placeholder="Cole aqui as linhas do retorno do RADAR (Ctrl+V)…"></textarea>
+        <div class="button-row" style="margin-top:10px">
+          <button class="btn" id="mergeAddPaste">＋ Adicionar colagem</button>
+          <button class="btn secondary" id="mergeClipboard">📋 Colar da área de transferência</button>
+          <button class="btn danger" id="mergeClear">Limpar consolidação</button>
+        </div>
+        <div id="mergePasteStatus" class="status-line">Aceita TAB do Excel, vírgula, ponto e vírgula e |.</div>
       </div>
-      <div style="margin-top:10px;display:flex;gap:80px">
-        <button class="btn secondary" id="mergeDownloadCSV">⬇️ Baixar CSV</button>
-        <button class="btn" id="mergeDownloadXLS">⬇️ Baixar Excel (.xls)</button>
-        <button class="btn secondary" id="backFromMerge">↩ Voltar</button>
+
+      <div class="panel">
+        <div class="panel-title">Ou carregue arquivos</div>
+        <div class="panel-help">Útil quando você recebeu vários retornos em CSV/XLS. O nome do arquivo será usado como Origem.</div>
+        <div class="drop-secondary"><input id="mergeFiles" type="file" multiple accept=".csv,text/csv,.xls,.txt"></div>
       </div>
     </div>
-    <div style="width:1000px">
-      <div class="small">Visualização</div>
-      <div id="mergeStats" class="preview" style="height:120px;overflow:auto">Nenhum arquivo carregado.</div>
+
+    <div>
+      <div class="panel">
+        <div class="panel-title">2. Conferência e exportação</div>
+        <div class="stats-grid">
+          <div class="stat"><b id="mergeStatRows">0</b><span>registros</span></div>
+          <div class="stat"><b id="mergeStatSources">0</b><span>origens</span></div>
+          <div class="stat"><b>8</b><span>colunas finais</span></div>
+        </div>
+        <div id="mergeStats" class="preview" style="min-height:70px">Nenhum dado adicionado.</div>
+        <div class="divider"></div>
+        <label for="mergeExportName">Nome do arquivo</label>
+        <input id="mergeExportName" type="text" value="erros_radar">
+        <div class="button-row" style="margin-top:10px">
+          <button class="btn" id="mergeDownloadCSV">⬇ Baixar CSV</button>
+          <button class="btn secondary" id="mergeDownloadXLS">⬇ Baixar Excel (.xls)</button>
+        </div>
+        <div class="panel-help" style="margin:10px 0 0">Exportação: Matrícula · Nome · CPF · Celular · Email · Erro · Unidade · Origem. A coluna Unidade é obtida da parte da Origem anterior ao primeiro “_”.</div>
+      </div>
     </div>
   </div>
 
-  <div style="margin-top:12px">
-    <div id="mergePreview" style="max-height:420px;overflow:auto;border:1px solid rgba(255,255,255,0.04);border-radius:10px;padding:8px"></div>
+  <div style="margin-top:16px">
+    <div class="panel-title">Prévia consolidada <span class="small">— clique em uma célula para editar</span></div>
+    <div id="mergePreview" class="table-wrap"><div class="small" style="padding:16px">Sem dados.</div></div>
   </div>
-  <div class="footer">Edição inline de células: clique e altere — tudo processado localmente.</div>
+  <div class="footer">Processamento local. A exportação usa UTF-8 com BOM para preservar acentos no Excel.</div>
 </section>
 
 <!-- APP: Gerador CSV por Unidade -->
-<section id="appGerador" class="container hidden" style="margin-top:14px">
-  <h2 style="margin-top:0;color:var(--accent)">👮‍♂️ Gerador CSV por Unidade — CET-MG (AUTUA)</h2>
-  <div class="grid">
+<section id="appGerador" class="container hidden">
+  <div class="section-title">
+    <div><div class="eyebrow">Cadastro AUTUA</div><h2>👮 Gerador CSV por Unidade</h2></div>
+    <button class="btn ghost" id="backFromGerador">← Voltar ao início</button>
+  </div>
+  <div class="work-grid">
     <div>
-      <label>1) Cole o CSV aqui ou selecione o arquivo (aceita colagem direta do Excel)</label>
-      <input id="unitFile" type="file" accept=".csv,text/csv" />
-      <textarea id="unitPaste" placeholder="Cole aqui (CTRL+V) uma seleção do Excel ou CSV separado por vírgula / ; / tab / |" style="min-height:300px"></textarea>
-
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <button class="btn" id="unitAnalyze">Analisar e detectar colunas</button>
-        <button class="btn secondary" id="unitProcess">Gerar arquivos por unidade</button>
-        <button class="btn secondary" id="backFromGerador">↩ Voltar</button>
+      <div class="panel">
+        <div class="panel-title">1. Cole a planilha <span class="flow-badge">Fluxo recomendado</span></div>
+        <div class="panel-help">Selecione as células no Excel e use Ctrl+C / Ctrl+V. Ao colar, o app já tenta detectar as colunas automaticamente.</div>
+        <textarea id="unitPaste" class="paste-primary" placeholder="Cole aqui: NOME, MASP, CPF, E-MAIL, UNIDADE, CELULAR…"></textarea>
+        <div class="button-row" style="margin-top:10px">
+          <button class="btn" id="unitAnalyze">Analisar colagem</button>
+          <button class="btn secondary" id="unitClipboard">📋 Colar da área de transferência</button>
+          <button class="btn secondary" id="unitProcess">Gerar arquivos por unidade</button>
+        </div>
+        <div id="unitFlowStatus" class="status-line">Aguardando dados.</div>
+        <div class="divider"></div>
+        <div class="panel-help" style="margin-bottom:6px">Se preferir, carregue um CSV:</div>
+        <div class="drop-secondary"><input id="unitFile" type="file" accept=".csv,text/csv,.txt"></div>
       </div>
 
-      <div id="analyzeResult" class="hidden" style="margin-top:12px">
-        <div class="small">Mapeie as colunas detectadas (ajuste se necessário)</div>
-        <div id="mappingArea" style="margin-top:6px"></div>
+      <div id="analyzeResult" class="panel hidden" style="margin-top:12px">
+        <div class="panel-title">2. Confira o mapeamento</div>
+        <div class="panel-help">Ajuste somente se alguma coluna tiver sido identificada incorretamente.</div>
+        <div id="mappingArea" class="mapping-grid"></div>
       </div>
 
-      <div id="resultBlock" class="hidden" style="margin-top:12px">
-        <h3 style="margin:6px 0;color:var(--muted)">Resultados</h3>
+      <div id="resultBlock" class="panel hidden" style="margin-top:12px">
+        <div class="panel-title">3. Arquivos prontos</div>
         <div id="summary" class="small"></div>
         <div style="margin-top:8px" id="unitsList"></div>
-        <div style="margin-top:10px">
-          <button class="btn" id="downloadAllUnits">Baixar todos os CSV (downloads separados)</button>
+        <div class="button-row" style="margin-top:12px">
+          <button class="btn secondary" id="downloadAllUnits">Baixar CSVs separados</button>
           <button class="btn" id="downloadZipUnits">Baixar ZIP com todos</button>
         </div>
       </div>
     </div>
 
     <div>
-      <div class="small">Prévia (primeiras linhas)</div>
-      <div id="unitPreview" class="preview" style="height:300px;overflow:auto">Sem dados</div>
+      <div class="panel" style="position:sticky;top:84px">
+        <div class="panel-title">Prévia dos dados</div>
+        <div class="panel-help">As primeiras linhas aparecem aqui para você validar a colagem antes de gerar.</div>
+        <div id="unitPreview" class="preview" style="min-height:360px;max-height:560px;overflow:auto">Sem dados</div>
+      </div>
     </div>
   </div>
-  <div class="footer">Formato requerido sugerido: NOME | MASP | CPF | E-MAIL | UNIDADE | CELULAR (mas o mapeador detecta automaticamente).</div>
-<style>
-  /* Reduz e iguala o tamanho das duas colunas do Gerador CSV */
-  #appGerador .grid {
-    display: grid;
-    grid-template-columns: 800px 800px; /* mesmos tamanhos */
-    gap: 40px; /* espaço entre os dois */
-  }
-
-  /* Garante que os campos ocupem toda a largura da coluna */
-  #appGerador input,
-  #appGerador textarea,
-  #appGerador .preview {
-    width: 100% !important;
-  }
-
-</style>
+  <div class="footer">Saída mantida no formato do AUTUA: MASP, NOME, CPF, CELULAR, EMAIL, T.</div>
 </section>
 
 <!-- APP: Gerador CPF -->
@@ -206,6 +297,8 @@
   <div class="footer">Clique em "Copiar" para copiar o CPF (sem máscara) para a área de transferência.</div>
 </section>
 
+<div id="toast" class="toast"></div>
+
 <!-- Scripts -->
 <script>
 /* ======== UTILITÁRIOS COMUNS ======== */
@@ -213,7 +306,33 @@ function onlyDigits(s){ return (s||'').toString().replace(/\D+/g,''); }
 function formatCPF(s){ s=onlyDigits(s); if(s.length!==11) return s; return s.slice(0,3)+'.'+s.slice(3,6)+'.'+s.slice(6,9)+'-'+s.slice(9); }
 function todayDateStr(){ const d=new Date(); const y=d.getFullYear(); const m=String(d.getMonth()+1).padStart(2,'0'); const dd=String(d.getDate()).padStart(2,'0'); return `${y}-${m}-${dd}`; }
 function downloadBlob(blob, filename){ const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); }
-function escapeHtml(s){ return String(s||'').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeHtml(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function showToast(message){
+  const el=document.getElementById('toast');
+  if(!el) return;
+  el.textContent=message; el.classList.add('show');
+  clearTimeout(showToast._timer); showToast._timer=setTimeout(()=>el.classList.remove('show'),2200);
+}
+function repairMojibake(value){
+  const s=String(value??'');
+  if(!/[ÃÂ]|â€|ðŸ/.test(s)) return s;
+  try{
+    const codes=Array.from(s).map(ch=>ch.charCodeAt(0));
+    if(codes.some(n=>n>255)) return s;
+    const repaired=new TextDecoder('utf-8',{fatal:true}).decode(Uint8Array.from(codes));
+    return repaired.includes(' ') ? s : repaired;
+  }catch(e){ return s; }
+}
+function decodeTextBuffer(buffer){
+  const bytes=new Uint8Array(buffer);
+  try{
+    return repairMojibake(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
+  }catch(e){
+    try{return repairMojibake(new TextDecoder('windows-1252').decode(bytes));}
+    catch(_){return new TextDecoder().decode(bytes);}
+  }
+}
+function csvQuoted(value){ return `"${String(repairMojibake(value??'')).replace(/"/g,'""')}"`; }
 
 /* ======== CSV PARSERS ======== */
 function detectDelimiter(sampleLines){
@@ -253,93 +372,165 @@ function parseCSVGeneric(text){
 
 /* ======== APP 1 (MERGE) ======== */
 (function prepareMergeApp(){
-  const fileInput = document.getElementById('mergeFiles');
-  const previewDiv = document.getElementById('mergePreview');
-  const stats = document.getElementById('mergeStats');
-  const downloadCSVBtn = document.getElementById('mergeDownloadCSV');
-  const downloadXLSBtn = document.getElementById('mergeDownloadXLS');
-  const exportNameInput = document.getElementById('mergeExportName');
-  const backBtn = document.getElementById('backFromMerge');
+  const fileInput=document.getElementById('mergeFiles');
+  const pasteArea=document.getElementById('mergePaste');
+  const pasteOrigin=document.getElementById('mergePasteOrigin');
+  const pasteStatus=document.getElementById('mergePasteStatus');
+  const clipboardBtn=document.getElementById('mergeClipboard');
+  const addPasteBtn=document.getElementById('mergeAddPaste');
+  const clearBtn=document.getElementById('mergeClear');
+  const previewDiv=document.getElementById('mergePreview');
+  const stats=document.getElementById('mergeStats');
+  const statRows=document.getElementById('mergeStatRows');
+  const statSources=document.getElementById('mergeStatSources');
+  const downloadCSVBtn=document.getElementById('mergeDownloadCSV');
+  const downloadXLSBtn=document.getElementById('mergeDownloadXLS');
+  const exportNameInput=document.getElementById('mergeExportName');
+  const backBtn=document.getElementById('backFromMerge');
 
-  let combinedData = []; let maxCols = 0;
+  const headers=['matricula','nome','cpf','celular','email','erro','unidade','origem'];
+  let combinedData=[]; // {cells:[6], origem:string}
 
-  fileInput.addEventListener('change', e=> {
-    const files = Array.from(e.target.files || []);
-    if(files.length===0) { stats.textContent='Nenhum arquivo.'; previewDiv.innerHTML=''; return; }
-    combinedData=[]; maxCols=0;
-    stats.textContent = `Lendo ${files.length} arquivo(s) ...`;
-    let processed=0;
-    files.forEach(file=>{
-      const reader=new FileReader();
-      reader.onload = evt=>{
-        const text = evt.target.result;
-        const parsed = parseCSVGeneric(text);
-        parsed.forEach(row=>{
-          const r = row.slice(); r.push(file.name);
-          maxCols = Math.max(maxCols, r.length);
-          combinedData.push(r);
-        });
-        processed++;
-        if(processed===files.length) renderTable();
+  function deriveUnitFromOrigin(origin){
+    const clean=repairMojibake(String(origin||'')).replace(/^.*[\\/]/,'').trim();
+    if(!clean) return '';
+    const pos=clean.indexOf('_');
+    return (pos>=0 ? clean.slice(0,pos) : clean.replace(/\.[^.]+$/,'')).trim();
+  }
+
+  function detectHeaderMap(firstRow){
+    const map={};
+    (firstRow||[]).forEach((value,idx)=>{
+      const n=normalizeHeaderName(value);
+      if(/^(matricula|matrícula|masp|registro)$/.test(n)||n.includes('matricula')||n.includes('masp')) map.matricula=idx;
+      else if(n==='nome'||n.includes('nomecompleto')) map.nome=idx;
+      else if(n==='cpf'||n.includes('cpf')) map.cpf=idx;
+      else if(n.includes('celular')||n.includes('telefone')||n==='fone') map.celular=idx;
+      else if(n.includes('email')) map.email=idx;
+      else if(n.includes('erro')||n.includes('mensagem')||n.includes('retorno')) map.erro=idx;
+      else if(n==='origem'||n.includes('arquivoorigem')) map.origem=idx;
+    });
+    return map;
+  }
+
+  function normalizeIncoming(parsed, fallbackOrigin){
+    if(!parsed.length) return [];
+    const headerMap=detectHeaderMap(parsed[0]);
+    const known=Object.keys(headerMap).length;
+    const hasHeader=known>=2;
+    const rows=hasHeader ? parsed.slice(1) : parsed;
+
+    return rows.filter(r=>r.some(v=>String(v??'').trim()!=='')).map(row=>{
+      const get=(key,pos)=>{
+        const idx=headerMap[key];
+        return repairMojibake(idx!=null ? (row[idx]??'') : (row[pos]??''));
       };
-      reader.readAsText(file,'utf-8');
-    });
-  });
-
-  function renderTable(){
-    let html = '<table><thead><tr>';
-    for(let i=0;i<maxCols-1;i++) html += `<th>Col ${i+1}</th>`;
-    html += `<th>Origem</th></tr></thead><tbody>`;
-    combinedData.forEach((row,rIdx)=>{
-      html += `<tr>`;
-      for(let c=0;c<maxCols;c++){
-        const val = row[c] ?? '';
-        const editable = (c===maxCols-1) ? 'contenteditable="false"' : 'contenteditable="true"';
-        html += `<td ${editable} data-row="${rIdx}" data-col="${c}">${escapeHtml(val)}</td>`;
-      }
-      html += `</tr>`;
-    });
-    html += `</tbody></table>`;
-    previewDiv.innerHTML = html;
-    stats.textContent = `Linhas: ${combinedData.length} — Colunas: ${maxCols}`;
-    previewDiv.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
-      td.addEventListener('input', e=>{
-        const r = parseInt(td.dataset.row), c = parseInt(td.dataset.col);
-        combinedData[r][c] = td.innerText;
-      });
+      let origem='';
+      if(headerMap.origem!=null) origem=repairMojibake(row[headerMap.origem]??'');
+      else if(!hasHeader && row.length>=8) origem=repairMojibake(row[7]??'');
+      else if(!hasHeader && row.length===7) origem=repairMojibake(row[6]??'');
+      if(!origem.trim()) origem=repairMojibake(fallbackOrigin||'COLAGEM_MANUAL');
+      return {cells:[get('matricula',0),get('nome',1),get('cpf',2),get('celular',3),get('email',4),get('erro',5)],origem};
     });
   }
 
-  downloadCSVBtn.addEventListener('click', ()=>{
-    if(combinedData.length===0){ alert('Nada para exportar'); return; }
-    const rows = combinedData.map(r=> r.map(cell=> `"${String(cell).replace(/"/g,'""')}"`).join(',')).join('\r\n');
-    const name = (exportNameInput.value.trim()||'erros_radar') + '_' + todayDateStr() + '.csv';
-    const blob = new Blob([rows], { type:'text/csv;charset=utf-8;' });
-    downloadBlob(blob, name);
-  });
+  function addText(text,origin){
+    const parsed=parseCSVGeneric(repairMojibake(text));
+    const incoming=normalizeIncoming(parsed,origin);
+    combinedData.push(...incoming);
+    renderTable();
+    return incoming.length;
+  }
 
-  downloadXLSBtn.addEventListener('click', ()=>{
-    if(combinedData.length===0){ alert('Nada para exportar'); return; }
-    let html = '<table border="1">';
-    html += '<thead><tr>';
-    for(let i=0;i<maxCols-1;i++) html += `<th>Col ${i+1}</th>`;
-    html += `<th>Origem</th></tr></thead><tbody>`;
-    combinedData.forEach(r=>{
-      html += '<tr>';
-      for(let i=0;i<maxCols;i++) html += `<td>${escapeHtml(r[i] ?? '')}</td>`;
-      html += '</tr>';
+  function exportRow(item){
+    return [...item.cells,deriveUnitFromOrigin(item.origem),item.origem];
+  }
+
+  function renderTable(){
+    statRows.textContent=combinedData.length;
+    const sources=new Set(combinedData.map(x=>x.origem).filter(Boolean));
+    statSources.textContent=sources.size;
+    if(!combinedData.length){
+      stats.textContent='Nenhum dado adicionado.';
+      previewDiv.innerHTML='<div class="small" style="padding:16px">Sem dados.</div>';
+      return;
+    }
+    stats.innerHTML=`<b>${combinedData.length}</b> registro(s) consolidados em <b>${sources.size}</b> origem(ns).<br><span class="small">Acentos serão normalizados na exportação e a Unidade será derivada da Origem.</span>`;
+    let html='<table><thead><tr>'+headers.map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>';
+    combinedData.forEach((item,rIdx)=>{
+      html+='<tr>'+exportRow(item).map((val,c)=>`<td contenteditable="${c<6?'true':'false'}" data-row="${rIdx}" data-col="${c}">${escapeHtml(val)}</td>`).join('')+'</tr>';
     });
-    html += '</tbody></table>';
-    const name = (exportNameInput.value.trim()||'erros_radar') + '_' + todayDateStr() + '.xls';
-    const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
-    downloadBlob(blob, name);
+    html+='</tbody></table>';
+    previewDiv.innerHTML=html;
+    previewDiv.querySelectorAll('td[contenteditable="true"]').forEach(td=>{
+      td.addEventListener('input',()=>{ combinedData[Number(td.dataset.row)].cells[Number(td.dataset.col)]=repairMojibake(td.innerText); });
+    });
+  }
+
+  addPasteBtn.addEventListener('click',()=>{
+    const text=pasteArea.value.trim();
+    if(!text){ pasteStatus.textContent='Cole os dados primeiro.'; pasteArea.focus(); return; }
+    const origin=pasteOrigin.value.trim()||'COLAGEM_MANUAL';
+    const added=addText(text,origin);
+    pasteStatus.textContent=`${added} registro(s) adicionados. Cole outro bloco se quiser continuar juntando.`;
+    pasteArea.value=''; pasteArea.focus(); showToast(`${added} registro(s) adicionados`);
   });
 
-  backBtn.addEventListener('click', ()=>{
-    hideAllApps(); document.getElementById('intro').classList.remove('hidden');
+  pasteArea.addEventListener('paste',()=>{
+    setTimeout(()=>{ const count=pasteArea.value.split(/\r?\n/).filter(x=>x.trim()).length; pasteStatus.textContent=`Colagem detectada: ${count} linha(s). Clique em “Adicionar colagem”.`; },60);
   });
 
-  window._mergeApp = { getData: ()=>combinedData };
+  if(clipboardBtn) clipboardBtn.addEventListener('click',async()=>{
+    try{
+      pasteArea.value=await navigator.clipboard.readText();
+      pasteArea.dispatchEvent(new Event('paste'));
+      pasteArea.focus();
+    }catch(e){ pasteStatus.textContent='O navegador bloqueou a leitura automática. Use CTRL+V na caixa acima.'; pasteArea.focus(); }
+  });
+
+  clearBtn.addEventListener('click',()=>{
+    if(combinedData.length && !confirm('Limpar toda a consolidação atual?')) return;
+    combinedData=[]; pasteArea.value=''; fileInput.value=''; renderTable(); pasteStatus.textContent='Consolidação limpa.'; showToast('Consolidação limpa');
+  });
+
+  fileInput.addEventListener('change',async e=>{
+    const files=Array.from(e.target.files||[]);
+    if(!files.length) return;
+    let total=0;
+    stats.textContent=`Lendo ${files.length} arquivo(s)…`;
+    for(const file of files){
+      try{
+        const text=decodeTextBuffer(await file.arrayBuffer());
+        total+=addText(text,file.name);
+      }catch(err){ console.error(err); }
+    }
+    fileInput.value='';
+    pasteStatus.textContent=`${total} registro(s) adicionados de ${files.length} arquivo(s).`;
+    showToast(`${files.length} arquivo(s) adicionados`);
+  });
+
+  downloadCSVBtn.addEventListener('click',()=>{
+    if(!combinedData.length){ alert('Nada para exportar'); return; }
+    const rows=[headers,...combinedData.map(exportRow)];
+    // BOM + ; abre corretamente no Excel pt-BR e preserva acentos.
+    const content='\uFEFF'+rows.map(r=>r.map(csvQuoted).join(';')).join('\r\n');
+    const name=(exportNameInput.value.trim()||'erros_radar')+'_'+todayDateStr()+'.csv';
+    downloadBlob(new Blob([content],{type:'text/csv;charset=utf-8'}),name);
+  });
+
+  downloadXLSBtn.addEventListener('click',()=>{
+    if(!combinedData.length){ alert('Nada para exportar'); return; }
+    let html='\uFEFF<html><head><meta charset="UTF-8"></head><body><table border="1"><thead><tr>';
+    html+=headers.map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>';
+    combinedData.forEach(item=>{ html+='<tr>'+exportRow(item).map(v=>`<td>${escapeHtml(repairMojibake(v))}</td>`).join('')+'</tr>'; });
+    html+='</tbody></table></body></html>';
+    const name=(exportNameInput.value.trim()||'erros_radar')+'_'+todayDateStr()+'.xls';
+    downloadBlob(new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8'}),name);
+  });
+
+  backBtn.addEventListener('click',()=>{ hideAllApps(); document.getElementById('intro').classList.remove('hidden'); });
+  renderTable();
+  window._mergeApp={getData:()=>combinedData};
 })();
 
 /* ======== APP 2 (GERADOR POR UNIDADE) ======== */
@@ -357,6 +548,8 @@ function parseCSVGeneric(text){
   const downloadAllBtn = document.getElementById('downloadAllUnits');
   const downloadZipBtn = document.getElementById('downloadZipUnits');
   const backBtn = document.getElementById('backFromGerador');
+  const clipboardBtn = document.getElementById('unitClipboard');
+  const flowStatus = document.getElementById('unitFlowStatus');
 
   let parsedCSV = null; let delimiterUsed = ','; let dataStartIndex = 0;
 
@@ -375,12 +568,28 @@ function parseCSVGeneric(text){
     return lines.map(l=>parseLineCSV(l, delim));
   }
 
-  fileInput.addEventListener('change', e=>{
-    const f = e.target.files[0];
+  fileInput.addEventListener('change', async e=>{
+    const f=e.target.files[0];
     if(!f) return;
-    const reader = new FileReader();
-    reader.onload = ev => { pasteArea.value = ev.target.result; };
-    reader.readAsText(f,'utf-8');
+    try{
+      pasteArea.value=decodeTextBuffer(await f.arrayBuffer());
+      flowStatus.textContent=`Arquivo “${f.name}” carregado. Analisando colunas…`;
+      setTimeout(()=>analyzeBtn.click(),30);
+    }catch(err){ alert('Não foi possível ler o arquivo.'); }
+  });
+
+  pasteArea.addEventListener('paste',()=>{
+    flowStatus.textContent='Colagem detectada. Analisando colunas…';
+    clearTimeout(pasteArea._analyzeTimer);
+    pasteArea._analyzeTimer=setTimeout(()=>{ if(pasteArea.value.trim()) analyzeBtn.click(); },120);
+  });
+
+  if(clipboardBtn) clipboardBtn.addEventListener('click',async()=>{
+    try{
+      pasteArea.value=await navigator.clipboard.readText();
+      flowStatus.textContent='Conteúdo colado. Analisando colunas…';
+      analyzeBtn.click();
+    }catch(e){ flowStatus.textContent='Use CTRL+V na área de colagem; o navegador bloqueou a leitura automática.'; pasteArea.focus(); }
   });
 
   // helper: basic heuristics to detect field type from header text & sample content
@@ -478,7 +687,7 @@ function parseCSVGeneric(text){
 
     for(let i=0;i<firstRow.length;i++){
       const colName = firstRow[i] || `col${i+1}`;
-      const wrap = document.createElement('div'); wrap.style.margin='6px 0';
+      const wrap = document.createElement('div'); wrap.className='mapping-item';
       const lab = document.createElement('div'); lab.className='small'; lab.textContent = `Col ${i+1}: "${colName}"`;
 
       const sel = document.createElement('select');
@@ -511,6 +720,7 @@ function parseCSVGeneric(text){
     analyzeResult.classList.remove('hidden');
     preview.textContent = parsedCSV.slice(0,8).map(r=> r.join(delimiterUsed)).join('\n');
     resultBlock.classList.add('hidden');
+    flowStatus.textContent = `${parsedCSV.length-dataStartIndex} registro(s) detectados. Confira o mapeamento e gere os arquivos.`;
   });
 
   // Helper small cleans
@@ -518,7 +728,8 @@ function parseCSVGeneric(text){
   function sanitizeFilenamePart(raw){ if(!raw) return 'SEM_UNIDADE'; let s = String(raw).trim(); s = s.replace(/[\r\n]/g,' ').replace(/[\\/:"*?<>|]+/g,''); s = s.replace(/\s+/g,' '); return s || 'SEM_UNIDADE'; }
 
   processBtn.addEventListener('click', ()=>{
-    if(!parsedCSV){ alert('Analise o arquivo primeiro'); return; }
+    if(!parsedCSV && pasteArea.value.trim()) analyzeBtn.click();
+    if(!parsedCSV){ alert('Cole os dados primeiro.'); pasteArea.focus(); return; }
     const selects = mappingArea.querySelectorAll('select');
     const map = {};
     selects.forEach((sel,idx)=> { if(sel.value && sel.value!=='ignore') map[sel.value] = idx; });
@@ -543,6 +754,7 @@ function parseCSVGeneric(text){
     // show results
     resultBlock.classList.remove('hidden');
     summary.innerHTML = `<b>Total processado:</b> ${total} linhas — unidades: ${Object.keys(groups).length}`;
+    flowStatus.textContent = `${total} registro(s) processados em ${Object.keys(groups).length} unidade(s). Arquivos prontos para baixar.`;
     unitsList.innerHTML = '';
     const date = dateStr;
     window.__csv_groups = groups;
@@ -550,7 +762,7 @@ function parseCSVGeneric(text){
     for(const unit of Object.keys(groups).sort()){
       const rows = groups[unit]; const count = rows.length;
       const safe = sanitizeFilenamePart(unit);
-      const filename = `${safe}_CADASTROCETMG_${date}.csv`;
+      const filename = `${safe}_CADASTRODETRANMG_${date}.csv`;
       const div = document.createElement('div'); div.className='unit-row';
       const left = document.createElement('div'); left.innerHTML = `<strong>${unit}</strong> <div class="small">(${count} registros)</div>`;
       const right = document.createElement('div'); right.className='actions';
@@ -566,7 +778,7 @@ function parseCSVGeneric(text){
       const all = window.__csv_groups || {};
       for(const unitName of Object.keys(all)){
         const safe = sanitizeFilenamePart(unitName);
-        const filename = `${safe}_CADASTROCETMG_${date}.csv`;
+        const filename = `${safe}_CADASTRODETRANMG_${date}.csv`;
         const content = all[unitName].map(r=> r.join(',')).join('\r\n');
         setTimeout(()=> downloadBlob(new Blob([content],{type:'text/csv'}), filename), 200);
       }
@@ -577,13 +789,13 @@ function parseCSVGeneric(text){
       const files = [];
       for(const unitName of Object.keys(all)){
         const safe = sanitizeFilenamePart(unitName);
-        const filename = `${safe}_CADASTROCETMG_${date}.csv`;
+        const filename = `${safe}_CADASTRODETRANMG_${date}.csv`;
         const content = all[unitName].map(r=> r.join(',')).join('\r\n');
         files.push({ name: filename, content: new TextEncoder().encode(content) });
       }
       if(files.length===0){ alert('Nenhum arquivo gerado'); return; }
       const blob = makeZip(files); // STORE (sem compressao)
-      downloadBlob(blob, `CETMG_CADASTROS_${date}.zip`);
+      downloadBlob(blob, `DETRANMG_CADASTROS_${date}.zip`);
     };
   });
 
@@ -765,7 +977,7 @@ function parseCSVGeneric(text){
     const cands = generateCandidates(cpf, n, agg);
     if(cands.length===0){ alert('Nenhum candidato para exportar'); return; }
     let csv = 'cpf_validado\n' + cands.map(c=>formatCPF(c)).join('\n');
-    const blob = new Blob([csv],{type:'text/csv'}); downloadBlob(blob, 'cpfs_candidatos.csv');
+    const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}); downloadBlob(blob, 'cpfs_candidatos.csv');
   });
 
   backBtn.addEventListener('click', ()=>{ hideAllApps(); document.getElementById('intro').classList.remove('hidden'); });
@@ -818,4 +1030,3 @@ function normalizeHeaderName(name){ if(!name) return ''; const s = name.normaliz
 
 </body>
 </html>
-
