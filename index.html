@@ -252,7 +252,7 @@
       <div class="panel">
         <div class="panel-title">1. Cole a planilha <span class="flow-badge">Fluxo recomendado</span></div>
         <div class="panel-help">Selecione as células no Excel e use Ctrl+C / Ctrl+V. Ao colar, o app já tenta detectar as colunas automaticamente.</div>
-        <textarea id="unitPaste" class="paste-primary" placeholder="Cole aqui: NOME, MASP, CPF, E-MAIL, UNIDADE, CELULAR…"></textarea>
+        <textarea id="unitPaste" class="paste-primary" placeholder="Cole aqui: MATRÍCULA, NOME, CPF, DATA DE NASCIMENTO, TELEFONE, EMAIL, UNIDADE…"></textarea>
         <div class="button-row" style="margin-top:10px">
           <button class="btn" id="unitAnalyze">Analisar colagem</button>
           <button class="btn secondary" id="unitClipboard">📋 Colar da área de transferência</button>
@@ -289,7 +289,7 @@
       </div>
     </div>
   </div>
-  <div class="footer">Saída mantida no formato do AUTUA: MASP, NOME, CPF, CELULAR, EMAIL, T.</div>
+  <div class="footer">Saída no padrão usuarios-lote: matricula, nome, cpf, data_nascimento, telefone, email (com cabeçalho).</div>
 </section>
 
 <!-- APP: Gerador CPF -->
@@ -638,11 +638,13 @@ function parseCSVGeneric(text){
   // helper: basic heuristics to detect field type from header text & sample content
   function scoreColumn(colIndex, headerText, sampleRows){
     const header = (headerText||'').toLowerCase();
-    let score = {masp:0, nome:0, cpf:0, telefone:0, email:0, unidade:0};
+    let score = {masp:0, nome:0, cpf:0, nascimento:0, telefone:0, email:0, unidade:0};
     // header cues
     if(/masp|matr|matricul|rg|registro/.test(header)) score.masp += 10;
+    if(/nasc|birth/.test(header)) score.nascimento += 18;
     if(/nome|nomecompleto|full ?name/.test(header)) score.nome += 10;
     if(/cpf/.test(header)) score.cpf += 10;
+    if(/nasc|birth/.test(header)) score.nascimento += 18;
     if(/tel|cel|celular|fone|telefone/.test(header)) score.telefone += 10;
     if(/email|e-?mail/.test(header)) score.email += 10;
     if(/unid|setor|depart|lotação|lotacao|local|org|orgao/.test(header)) score.unidade += 10;
@@ -681,7 +683,7 @@ function parseCSVGeneric(text){
       const h = firstRow[c] || '';
       scoresPerCol[c] = scoreColumn(c, h, parsed);
     }
-    const fields = ['cpf','masp','nome','email','telefone','unidade'];
+    const fields = ['cpf','masp','nome','nascimento','email','telefone','unidade'];
     fields.forEach(field=>{
       let bestIdx = -1; let bestScore = -1;
       for(let c=0;c<scoresPerCol.length;c++){
@@ -710,7 +712,7 @@ function parseCSVGeneric(text){
     const firstRow = parsedCSV[0].map(c=>String(c).trim());
     // header detection: if many non-numeric -> treat as header
     const normalized = firstRow.map(n=> normalizeHeaderName(n) );
-    const looksHeader = normalized.some(n=> ['nome','masp','cpf','email','unidade','celular','telefone'].includes(n));
+    const looksHeader = normalized.some(n=> ['nome','masp','matricula','cpf','datanascimento','nascimento','email','unidade','celular','telefone'].includes(n));
     dataStartIndex = looksHeader ? 1 : 0;
 
     // auto-map using heuristics
@@ -722,6 +724,7 @@ function parseCSVGeneric(text){
       {key:'masp', label:'MASP'},
       {key:'nome', label:'NOME'},
       {key:'cpf', label:'CPF'},
+      {key:'nascimento', label:'DATA DE NASCIMENTO'},
       {key:'telefone', label:'TELEFONE / CELULAR'},
       {key:'email', label:'EMAIL'},
       {key:'unidade', label:'UNIDADE (agrupamento)'},
@@ -741,6 +744,7 @@ function parseCSVGeneric(text){
 
       // choose default by autoMap or header normalization
       if(autoMap.cpf === i) sel.value='cpf';
+      else if(autoMap.nascimento === i) sel.value='nascimento';
       else if(autoMap.masp === i) sel.value='masp';
       else if(autoMap.nome === i) sel.value='nome';
       else if(autoMap.email === i) sel.value='email';
@@ -751,6 +755,7 @@ function parseCSVGeneric(text){
         if(norm.includes('masp')) sel.value='masp';
         else if(norm.includes('nome')) sel.value='nome';
         else if(norm.includes('cpf')) sel.value='cpf';
+        else if(norm.includes('nasc')) sel.value='nascimento';
         else if(norm.includes('celular')||norm.includes('telefone')) sel.value='telefone';
         else if(norm.includes('email')) sel.value='email';
         else if(norm.includes('unidade')||norm.includes('setor')||norm.includes('depart')) sel.value='unidade';
@@ -766,79 +771,76 @@ function parseCSVGeneric(text){
     flowStatus.textContent = `${parsedCSV.length-dataStartIndex} registro(s) detectados. Confira o mapeamento e gere os arquivos.`;
   });
 
-  // Helper small cleans
-  function cleanFieldForCSV(field){ if(field==null) return ''; return String(field).replace(/[\r\n]/g,' ').replace(/,/g,'').trim(); }
-  function sanitizeFilenamePart(raw){ if(!raw) return 'SEM_UNIDADE'; let s = String(raw).trim(); s = s.replace(/[\r\n]/g,' ').replace(/[\\/:"*?<>|]+/g,''); s = s.replace(/\s+/g,' '); return s || 'SEM_UNIDADE'; }
-
-  processBtn.addEventListener('click', ()=>{
-    if(!parsedCSV && pasteArea.value.trim()) analyzeBtn.click();
-    if(!parsedCSV){ alert('Cole os dados primeiro.'); pasteArea.focus(); return; }
-    const selects = mappingArea.querySelectorAll('select');
-    const map = {};
-    selects.forEach((sel,idx)=> { if(sel.value && sel.value!=='ignore') map[sel.value] = idx; });
-    const groups = {}; let total=0; const dateStr = todayDateStr();
-
+  // Exportação por unidade no padrão usuarios-lote (CSV UTF-8, vírgulas e cabeçalho).
+  const unitHeaders=['matricula','nome','cpf','data_nascimento','telefone','email'];
+  function cleanFieldForCSV(value){return repairMojibake(String(value??'')).replace(/[\r\n]+/g,' ').trim();}
+  function sanitizeFilenamePart(raw){return (String(raw||'SEM_UNIDADE').trim().replace(/[\\/:"*?<>|\r\n]+/g,'').replace(/\s+/g,' ')||'SEM_UNIDADE');}
+  function normalizeBirthDate(value){
+    const raw=cleanFieldForCSV(value);let dd,mm,yyyy,m;
+    if((m=raw.match(/^(\d{2})[\/-](\d{2})[\/-](\d{4})$/))){dd=m[1];mm=m[2];yyyy=m[3];}
+    else if((m=raw.match(/^(\d{4})-(\d{2})-(\d{2})$/))){yyyy=m[1];mm=m[2];dd=m[3];}
+    else if(/^\d{8}$/.test(raw)){dd=raw.slice(0,2);mm=raw.slice(2,4);yyyy=raw.slice(4);}
+    else return '';
+    const d=Number(dd),month=Number(mm),year=Number(yyyy),test=new Date(Date.UTC(year,month-1,d));
+    if(year<1900||year>new Date().getFullYear()||test.getUTCFullYear()!==year||test.getUTCMonth()!==month-1||test.getUTCDate()!==d)return '';
+    return dd+mm+yyyy;
+  }
+  function encodeUnitCSV(rows){
+    const quote=value=>{const v=String(value??'');return /[,"\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
+    return [unitHeaders,...rows].map(r=>r.map(quote).join(',')).join('\r\n')+'\r\n';
+  }
+  processBtn.addEventListener('click',()=>{
+    if(!parsedCSV && pasteArea.value.trim())analyzeBtn.click();
+    if(!parsedCSV){alert('Cole os dados primeiro.');pasteArea.focus();return;}
+    const map={},duplicates=[];
+    mappingArea.querySelectorAll('select').forEach((sel,i)=>{
+      if(sel.value!=='ignore'){
+        if(map[sel.value]!==undefined)duplicates.push(sel.value);
+        map[sel.value]=i;
+      }
+    });
+    if(duplicates.length){alert('Corrija os campos mapeados mais de uma vez: '+duplicates.join(', '));return;}
+    for(const required of ['masp','nome','cpf','nascimento']){
+      if(map[required]===undefined){alert('Mapeie a coluna obrigatória: '+(required==='masp'?'MATRÍCULA':required==='nascimento'?'DATA DE NASCIMENTO':required.toUpperCase()));return;}
+    }
+    const groups=Object.create(null),errors=[];let total=0;const date=todayDateStr();
     for(let i=dataStartIndex;i<parsedCSV.length;i++){
-      const row = parsedCSV[i];
-      const getVal = (fld) => (map[fld]!=null && map[fld] < row.length) ? row[map[fld]] : '';
-      const rawUnidade = (getVal('unidade') || 'SEM_UNIDADE').toString().trim() || 'SEM_UNIDADE';
-      const unidadeKey = rawUnidade;
-      const masp = cleanFieldForCSV(getVal('masp'));
-      const nome = cleanFieldForCSV(getVal('nome'));
-      const cpf = cleanFieldForCSV(getVal('cpf'));
-      const telefone = cleanFieldForCSV(getVal('telefone'));
-      const email = cleanFieldForCSV(getVal('email'));
-      const outRow = [masp,nome,cpf,telefone,email,'T'];
-      if(!groups[unidadeKey]) groups[unidadeKey] = [];
-      groups[unidadeKey].push(outRow);
-      total++;
+      const row=parsedCSV[i],getVal=key=>(map[key]!==undefined&&map[key]<row.length)?row[map[key]]:'';
+      const matricula=cleanFieldForCSV(getVal('masp')),nome=cleanFieldForCSV(getVal('nome'));
+      const cpf=onlyDigits(getVal('cpf')),nascimento=normalizeBirthDate(getVal('nascimento'));
+      const telefone=onlyDigits(getVal('telefone')),email=cleanFieldForCSV(getVal('email'));
+      if(!matricula||!nome||cpf.length!==11||!nascimento){
+        const reasons=[!matricula?'matrícula vazia':null,!nome?'nome vazio':null,cpf.length!==11?'CPF sem 11 dígitos':null,!nascimento?'nascimento inválido':null].filter(Boolean);
+        errors.push('Linha '+(i+1)+': '+reasons.join(', '));continue;
+      }
+      const unit=cleanFieldForCSV(getVal('unidade'))||'SEM_UNIDADE';
+      (groups[unit]??=[]).push([matricula,nome,cpf,nascimento,telefone,email]);total++;
     }
-
-    // show results
-    resultBlock.classList.remove('hidden');
-    summary.innerHTML = `<b>Total processado:</b> ${total} linhas — unidades: ${Object.keys(groups).length}`;
-    flowStatus.textContent = `${total} registro(s) processados em ${Object.keys(groups).length} unidade(s). Arquivos prontos para baixar.`;
-    unitsList.innerHTML = '';
-    const date = dateStr;
-    window.__csv_groups = groups;
-
+    window.__csv_groups=groups;
+    resultBlock.classList.remove('hidden');unitsList.innerHTML='';
+    summary.textContent=total+' registro(s) válidos, '+Object.keys(groups).length+' unidade(s), '+errors.length+' linha(s) ignorada(s).';
+    flowStatus.textContent=errors.length?errors.slice(0,4).join(' | ')+(errors.length>4?' | Outros '+(errors.length-4)+' erro(s)':''):total+' registro(s) prontos para baixar.';
+    if(!total){alert('Nenhuma linha válida para exportar. Confira as datas e os campos obrigatórios.');return;}
     for(const unit of Object.keys(groups).sort()){
-      const rows = groups[unit]; const count = rows.length;
-      const safe = sanitizeFilenamePart(unit);
-      const filename = `${safe}_CADASTRODETRANMG_${date}.csv`;
-      const div = document.createElement('div'); div.className='unit-row';
-      const left = document.createElement('div'); left.innerHTML = `<strong>${unit}</strong> <div class="small">(${count} registros)</div>`;
-      const right = document.createElement('div'); right.className='actions';
-      const dl = document.createElement('button'); dl.className='btn secondary'; dl.textContent='Baixar CSV';
-      dl.addEventListener('click', ()=> { const content = rows.map(r=>r.join(',')).join('\r\n'); downloadBlob(new Blob([content],{type:'text/csv'}), filename); });
-      const pv = document.createElement('button'); pv.className='btn secondary'; pv.textContent='Visualizar 8 linhas';
-      pv.addEventListener('click', ()=> { alert(`Preview — ${unit} (${count} registros):\n\n${rows.slice(0,8).map(r=>r.join(',')).join('\n')}`); });
-      right.appendChild(dl); right.appendChild(pv);
-      div.appendChild(left); div.appendChild(right); unitsList.appendChild(div);
+      const rows=groups[unit],filename=sanitizeFilenamePart(unit)+'_CADASTRODETRANMG_'+date+'.csv';
+      const div=document.createElement('div');div.className='unit-row';
+      const left=document.createElement('div'),strong=document.createElement('strong');strong.textContent=unit;
+      const count=document.createElement('div');count.className='small';count.textContent='('+rows.length+' registros)';
+      left.append(strong,count);const right=document.createElement('div');right.className='actions';
+      const dl=document.createElement('button');dl.className='btn secondary';dl.textContent='Baixar CSV';
+      dl.onclick=()=>downloadBlob(new Blob([encodeUnitCSV(rows)],{type:'text/csv;charset=utf-8'}),filename);
+      const pv=document.createElement('button');pv.className='btn secondary';pv.textContent='Visualizar 8 linhas';
+      pv.onclick=()=>alert('Prévia — '+unit+'\n\n'+encodeUnitCSV(rows.slice(0,8)));
+      right.append(dl,pv);div.append(left,right);unitsList.appendChild(div);
     }
-
-    downloadAllBtn.onclick = function(){
-      const all = window.__csv_groups || {};
-      for(const unitName of Object.keys(all)){
-        const safe = sanitizeFilenamePart(unitName);
-        const filename = `${safe}_CADASTRODETRANMG_${date}.csv`;
-        const content = all[unitName].map(r=> r.join(',')).join('\r\n');
-        setTimeout(()=> downloadBlob(new Blob([content],{type:'text/csv'}), filename), 200);
+    downloadAllBtn.onclick=()=>{
+      for(const unit of Object.keys(groups)){
+        downloadBlob(new Blob([encodeUnitCSV(groups[unit])],{type:'text/csv;charset=utf-8'}),sanitizeFilenamePart(unit)+'_CADASTRODETRANMG_'+date+'.csv');
       }
     };
-
-    downloadZipBtn.onclick = function(){
-      const all = window.__csv_groups || {};
-      const files = [];
-      for(const unitName of Object.keys(all)){
-        const safe = sanitizeFilenamePart(unitName);
-        const filename = `${safe}_CADASTRODETRANMG_${date}.csv`;
-        const content = all[unitName].map(r=> r.join(',')).join('\r\n');
-        files.push({ name: filename, content: new TextEncoder().encode(content) });
-      }
-      if(files.length===0){ alert('Nenhum arquivo gerado'); return; }
-      const blob = makeZip(files); // STORE (sem compressao)
-      downloadBlob(blob, `DETRANMG_CADASTROS_${date}.zip`);
+    downloadZipBtn.onclick=()=>{
+      const files=Object.keys(groups).map(unit=>({name:sanitizeFilenamePart(unit)+'_CADASTRODETRANMG_'+date+'.csv',content:new TextEncoder().encode(encodeUnitCSV(groups[unit]))}));
+      downloadBlob(makeZip(files),'DETRANMG_CADASTROS_'+date+'.zip');
     };
   });
 
