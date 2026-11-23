@@ -580,6 +580,7 @@ function parseCSVGeneric(text){
     pasteArea.value=''; pasteArea.focus(); showToast(`${added} registro(s) adicionados`);
   });
 
+  pasteArea.addEventListener('input',()=>{parsedCSV=null;resultBlock.classList.add('hidden');});
   pasteArea.addEventListener('paste',()=>{
     parsedCSV=null;inputVersion++;
     setTimeout(()=>{ const count=pasteArea.value.split(/\r?\n/).filter(x=>x.trim()).length; pasteStatus.textContent=`Colagem detectada: ${count} linha(s). Clique em “Adicionar colagem”.`; },60);
@@ -867,7 +868,9 @@ function parseCSVGeneric(text){
 
     analyzeResult.classList.remove('hidden');
     renderUnitPreview();
-    const sampleUnits=new Set(parsedCSV.slice(dataStartIndex).map(row=>row[mappingArea.querySelectorAll('select') ? Array.from(mappingArea.querySelectorAll('select')).findIndex(sel=>sel.value==='unidade') : -1]).filter(Boolean));
+    const unitIndex=Array.from(mappingArea.querySelectorAll('select')).findIndex(sel=>sel.value==='unidade');
+    const sampleUnits=new Set();
+    if(unitIndex>=0)for(let i=dataStartIndex;i<parsedCSV.length;i++){const value=String(parsedCSV[i][unitIndex]??'').trim();if(value)sampleUnits.add(value);}
     analysisStats.innerHTML='<div class="unit-mini-stat"><b>'+Math.max(0,parsedCSV.length-dataStartIndex).toLocaleString('pt-BR')+'</b><span>REGISTROS</span></div><div class="unit-mini-stat"><b>'+sampleUnits.size.toLocaleString('pt-BR')+'</b><span>UNIDADES</span></div><div class="unit-mini-stat"><b>'+firstRow.length+'</b><span>COLUNAS RECEBIDAS</span></div>';
     analysisStats.classList.remove('hidden');
     mappingNotice.textContent=Array.from(mappingArea.querySelectorAll('select')).some(sel=>sel.value==='nascimento')?'':'A planilha não contém data de nascimento. Desmarque esse campo na exportação, ou informe a coluna correspondente. Nenhum valor será inventado.';
