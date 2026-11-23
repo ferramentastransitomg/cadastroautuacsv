@@ -122,6 +122,31 @@
   @media (max-width:1050px){.work-grid{grid-template-columns:1fr}.app-launchers{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(3,1fr)}}
   @media (max-width:620px){header{padding:12px 14px}.container{margin:14px;padding:14px}.mapping-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:1fr}.button-row .btn{width:100%}}
 
+  /* Gerador: seleção de colunas, hierarquia visual e prévia amigável */
+  #appGerador{--soft-accent:rgba(67,192,146,.12)}
+  #appGerador .section-title{padding:4px 2px 14px;border-bottom:1px solid var(--line)}
+  #appGerador .section-title h2{font-size:23px!important;letter-spacing:-.5px}
+  #appGerador .panel{border-radius:17px;padding:20px;box-shadow:0 4px 22px rgba(0,0,0,.07)}
+  #appGerador .panel-title{font-size:15px;letter-spacing:-.15px}
+  #appGerador .paste-primary{border-radius:11px}
+  #appGerador .unit-row{gap:12px;flex-wrap:wrap}
+  #appGerador .unit-row .actions{flex-wrap:wrap}
+  .column-panel-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .column-picker{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:14px 0}
+  .column-option{display:flex;align-items:center;gap:12px;margin:0;min-height:55px;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.025);cursor:pointer;transition:background .15s,border-color .15s}
+  .column-option:has(input:checked){background:var(--soft-accent);border-color:rgba(67,192,146,.4)}
+  .column-option:hover{border-color:var(--accent-2)}
+  .column-option input{width:19px;height:19px;flex:none;accent-color:var(--accent-2);cursor:pointer}
+  .column-option span{display:flex;flex-direction:column;gap:3px}
+  .column-option strong{font-size:13px;color:var(--text)}
+  .column-option small{font-size:11px;color:var(--muted);font-weight:400}
+  .column-meta{font-size:12px;color:var(--muted)}
+  .column-preview{overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;white-space:pre;line-height:1.6;font-size:12px;color:var(--text);font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+  .column-warning{font-size:12px;color:var(--warning);min-height:18px;margin-top:8px}
+  body.light #appGerador{--soft-accent:rgba(15,122,90,.075)}
+  body.light .column-option{background:rgba(15,122,90,.018)}
+  body.light .column-option:has(input:checked){background:var(--soft-accent)}
+  @media(max-width:620px){.column-picker{grid-template-columns:1fr}#appGerador .panel{padding:15px}}
   .version-badge{
     position:fixed;
     top:10px;
@@ -265,9 +290,31 @@
       </div>
 
       <div id="analyzeResult" class="panel hidden" style="margin-top:12px">
-        <div class="panel-title">2. Confira o mapeamento</div>
+        <div class="panel-title">Confira o mapeamento automático</div>
         <div class="panel-help">Ajuste somente se alguma coluna tiver sido identificada incorretamente.</div>
         <div id="mappingArea" class="mapping-grid"></div>
+      </div>
+
+      <div id="unitColumnsPanel" class="panel" style="margin-top:12px">
+        <div class="column-panel-heading">
+          <div>
+            <div class="panel-title">2. Colunas do arquivo</div>
+            <div class="panel-help" style="margin-bottom:0">Todas vêm selecionadas. Desmarque as que não devem aparecer nos CSVs.</div>
+          </div>
+          <button type="button" class="btn secondary" id="unitSelectAllColumns">Selecionar todas</button>
+        </div>
+        <div class="column-picker" id="unitColumnPicker">
+          <label class="column-option"><input type="checkbox" value="matricula" checked><span><strong>Matrícula</strong><small>matricula</small></span></label>
+          <label class="column-option"><input type="checkbox" value="nome" checked><span><strong>Nome</strong><small>nome</small></span></label>
+          <label class="column-option"><input type="checkbox" value="cpf" checked><span><strong>CPF</strong><small>cpf</small></span></label>
+          <label class="column-option"><input type="checkbox" value="data_nascimento" checked><span><strong>Data de nascimento</strong><small>data_nascimento</small></span></label>
+          <label class="column-option"><input type="checkbox" value="telefone" checked><span><strong>Telefone</strong><small>telefone</small></span></label>
+          <label class="column-option"><input type="checkbox" value="email" checked><span><strong>E-mail</strong><small>email</small></span></label>
+        </div>
+        <div class="column-meta" id="unitColumnCount" aria-live="polite">6 de 6 colunas selecionadas</div>
+        <div class="panel-help" style="margin-top:12px;margin-bottom:6px">Prévia do cabeçalho de exportação</div>
+        <div class="column-preview" id="unitColumnsPreview">matricula,nome,cpf,data_nascimento,telefone,email</div>
+        <div class="column-warning" id="unitColumnWarning" role="status"></div>
       </div>
 
       <div id="resultBlock" class="panel hidden" style="margin-top:12px">
@@ -289,7 +336,7 @@
       </div>
     </div>
   </div>
-  <div class="footer">Saída no padrão usuarios-lote: matricula, nome, cpf, data_nascimento, telefone, email (com cabeçalho).</div>
+  <div class="footer">Exportação CSV em UTF-8 · Colunas configuráveis · Ordem preservada conforme o modelo usuarios-lote.</div>
 </section>
 
 <!-- APP: Gerador CPF -->
@@ -644,7 +691,6 @@ function parseCSVGeneric(text){
     if(/nasc|birth/.test(header)) score.nascimento += 18;
     if(/nome|nomecompleto|full ?name/.test(header)) score.nome += 10;
     if(/cpf/.test(header)) score.cpf += 10;
-    if(/nasc|birth/.test(header)) score.nascimento += 18;
     if(/tel|cel|celular|fone|telefone/.test(header)) score.telefone += 10;
     if(/email|e-?mail/.test(header)) score.email += 10;
     if(/unid|setor|depart|lotação|lotacao|local|org|orgao/.test(header)) score.unidade += 10;
@@ -773,6 +819,26 @@ function parseCSVGeneric(text){
 
   // Exportação por unidade no padrão usuarios-lote (CSV UTF-8, vírgulas e cabeçalho).
   const unitHeaders=['matricula','nome','cpf','data_nascimento','telefone','email'];
+  const unitColumnPicker=document.getElementById('unitColumnPicker');
+  const unitColumnCount=document.getElementById('unitColumnCount');
+  const unitColumnsPreview=document.getElementById('unitColumnsPreview');
+  const unitColumnWarning=document.getElementById('unitColumnWarning');
+  const unitSelectAllColumns=document.getElementById('unitSelectAllColumns');
+  const selectedUnitHeaders=()=>Array.from(unitColumnPicker.querySelectorAll('input[type="checkbox"]:checked'),input=>input.value);
+  function refreshSelectedColumns(){
+    const selected=selectedUnitHeaders();
+    unitColumnCount.textContent=selected.length+' de '+unitHeaders.length+' colunas selecionadas';
+    unitColumnsPreview.textContent=selected.length?selected.join(','):'Nenhuma coluna selecionada';
+    unitColumnWarning.textContent=selected.length?'':'Selecione pelo menos uma coluna para gerar os arquivos.';
+    resultBlock.classList.add('hidden');
+    window.__csv_groups=null;
+  }
+  unitColumnPicker.addEventListener('change',refreshSelectedColumns);
+  unitSelectAllColumns.addEventListener('click',()=>{
+    unitColumnPicker.querySelectorAll('input[type="checkbox"]').forEach(input=>input.checked=true);
+    refreshSelectedColumns();
+  });
+  refreshSelectedColumns();
   function cleanFieldForCSV(value){return repairMojibake(String(value??'')).replace(/[\r\n]+/g,' ').trim();}
   function sanitizeFilenamePart(raw){return (String(raw||'SEM_UNIDADE').trim().replace(/[\\/:"*?<>|\r\n]+/g,'').replace(/\s+/g,' ')||'SEM_UNIDADE');}
   function normalizeBirthDate(value){
@@ -785,13 +851,16 @@ function parseCSVGeneric(text){
     if(year<1900||year>new Date().getFullYear()||test.getUTCFullYear()!==year||test.getUTCMonth()!==month-1||test.getUTCDate()!==d)return '';
     return dd+mm+yyyy;
   }
-  function encodeUnitCSV(rows){
+  function encodeUnitCSV(rows,headers){
     const quote=value=>{const v=String(value??'');return /[,"\r\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;};
-    return [unitHeaders,...rows].map(r=>r.map(quote).join(',')).join('\r\n')+'\r\n';
+    const cols=headers||selectedUnitHeaders();
+    return [cols,...rows.map(row=>cols.map(col=>row[unitHeaders.indexOf(col)]))].map(r=>r.map(quote).join(',')).join('\r\n')+'\r\n';
   }
   processBtn.addEventListener('click',()=>{
     if(!parsedCSV && pasteArea.value.trim())analyzeBtn.click();
     if(!parsedCSV){alert('Cole os dados primeiro.');pasteArea.focus();return;}
+    const outputColumns=selectedUnitHeaders();
+    if(!outputColumns.length){unitColumnWarning.textContent='Selecione pelo menos uma coluna.';unitColumnPicker.focus();return;}
     const map={},duplicates=[];
     mappingArea.querySelectorAll('select').forEach((sel,i)=>{
       if(sel.value!=='ignore'){
@@ -800,7 +869,8 @@ function parseCSVGeneric(text){
       }
     });
     if(duplicates.length){alert('Corrija os campos mapeados mais de uma vez: '+duplicates.join(', '));return;}
-    for(const required of ['masp','nome','cpf','nascimento']){
+    const inputKey={matricula:'masp',nome:'nome',cpf:'cpf',data_nascimento:'nascimento',telefone:'telefone',email:'email'};
+    for(const required of outputColumns.map(col=>inputKey[col])){
       if(map[required]===undefined){alert('Mapeie a coluna obrigatória: '+(required==='masp'?'MATRÍCULA':required==='nascimento'?'DATA DE NASCIMENTO':required.toUpperCase()));return;}
     }
     const groups=Object.create(null),errors=[];let total=0;const date=todayDateStr();
@@ -809,8 +879,13 @@ function parseCSVGeneric(text){
       const matricula=cleanFieldForCSV(getVal('masp')),nome=cleanFieldForCSV(getVal('nome'));
       const cpf=onlyDigits(getVal('cpf')),nascimento=normalizeBirthDate(getVal('nascimento'));
       const telefone=onlyDigits(getVal('telefone')),email=cleanFieldForCSV(getVal('email'));
-      if(!matricula||!nome||cpf.length!==11||!nascimento){
-        const reasons=[!matricula?'matrícula vazia':null,!nome?'nome vazio':null,cpf.length!==11?'CPF sem 11 dígitos':null,!nascimento?'nascimento inválido':null].filter(Boolean);
+      const reasons=[
+        outputColumns.includes('matricula')&&!matricula?'matrícula vazia':null,
+        outputColumns.includes('nome')&&!nome?'nome vazio':null,
+        outputColumns.includes('cpf')&&cpf.length!==11?'CPF sem 11 dígitos':null,
+        outputColumns.includes('data_nascimento')&&!nascimento?'nascimento inválido':null
+      ].filter(Boolean);
+      if(reasons.length){
         errors.push('Linha '+(i+1)+': '+reasons.join(', '));continue;
       }
       const unit=cleanFieldForCSV(getVal('unidade'))||'SEM_UNIDADE';
@@ -818,7 +893,7 @@ function parseCSVGeneric(text){
     }
     window.__csv_groups=groups;
     resultBlock.classList.remove('hidden');unitsList.innerHTML='';
-    summary.textContent=total+' registro(s) válidos, '+Object.keys(groups).length+' unidade(s), '+errors.length+' linha(s) ignorada(s).';
+    summary.textContent=total+' registro(s) válidos, '+Object.keys(groups).length+' unidade(s), '+outputColumns.length+' coluna(s), '+errors.length+' linha(s) ignorada(s).';
     flowStatus.textContent=errors.length?errors.slice(0,4).join(' | ')+(errors.length>4?' | Outros '+(errors.length-4)+' erro(s)':''):total+' registro(s) prontos para baixar.';
     if(!total){alert('Nenhuma linha válida para exportar. Confira as datas e os campos obrigatórios.');return;}
     for(const unit of Object.keys(groups).sort()){
@@ -828,18 +903,18 @@ function parseCSVGeneric(text){
       const count=document.createElement('div');count.className='small';count.textContent='('+rows.length+' registros)';
       left.append(strong,count);const right=document.createElement('div');right.className='actions';
       const dl=document.createElement('button');dl.className='btn secondary';dl.textContent='Baixar CSV';
-      dl.onclick=()=>downloadBlob(new Blob([encodeUnitCSV(rows)],{type:'text/csv;charset=utf-8'}),filename);
+      dl.onclick=()=>downloadBlob(new Blob([encodeUnitCSV(rows,outputColumns)],{type:'text/csv;charset=utf-8'}),filename);
       const pv=document.createElement('button');pv.className='btn secondary';pv.textContent='Visualizar 8 linhas';
-      pv.onclick=()=>alert('Prévia — '+unit+'\n\n'+encodeUnitCSV(rows.slice(0,8)));
+      pv.onclick=()=>alert('Prévia — '+unit+'\n\n'+encodeUnitCSV(rows.slice(0,8),outputColumns));
       right.append(dl,pv);div.append(left,right);unitsList.appendChild(div);
     }
     downloadAllBtn.onclick=()=>{
       for(const unit of Object.keys(groups)){
-        downloadBlob(new Blob([encodeUnitCSV(groups[unit])],{type:'text/csv;charset=utf-8'}),sanitizeFilenamePart(unit)+'_CADASTRODETRANMG_'+date+'.csv');
+        downloadBlob(new Blob([encodeUnitCSV(groups[unit],outputColumns)],{type:'text/csv;charset=utf-8'}),sanitizeFilenamePart(unit)+'_CADASTRODETRANMG_'+date+'.csv');
       }
     };
     downloadZipBtn.onclick=()=>{
-      const files=Object.keys(groups).map(unit=>({name:sanitizeFilenamePart(unit)+'_CADASTRODETRANMG_'+date+'.csv',content:new TextEncoder().encode(encodeUnitCSV(groups[unit]))}));
+      const files=Object.keys(groups).map(unit=>({name:sanitizeFilenamePart(unit)+'_CADASTRODETRANMG_'+date+'.csv',content:new TextEncoder().encode(encodeUnitCSV(groups[unit],outputColumns))}));
       downloadBlob(makeZip(files),'DETRANMG_CADASTROS_'+date+'.zip');
     };
   });
