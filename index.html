@@ -147,6 +147,18 @@
   body.light .column-option{background:rgba(15,122,90,.018)}
   body.light .column-option:has(input:checked){background:var(--soft-accent)}
   @media(max-width:620px){.column-picker{grid-template-columns:1fr}#appGerador .panel{padding:15px}}
+  .unit-analysis-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}
+  .unit-mini-stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+  .unit-mini-stat b{font-size:20px;display:block;color:var(--text);letter-spacing:-.4px}
+  .unit-mini-stat span{font-size:11px;color:var(--muted)}
+  .unit-preview-pill{font-size:10px;color:var(--muted);font-weight:500;margin-left:4px}
+  .unit-preview-table{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:auto;font-size:12px}
+  .unit-preview-table table{min-width:100%;width:max-content;border:0;border-collapse:collapse}
+  .unit-preview-table th{position:sticky;top:0;z-index:1;background:var(--panel-2);color:var(--text);padding:11px;border-bottom:1px solid var(--line);white-space:nowrap}
+  .unit-preview-table td{max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:10px 12px}
+  .unit-preview-table tr:hover td{background:var(--soft-accent)}
+  #unitMappingNotice:empty{display:none}
+  @media(max-width:620px){.unit-analysis-stats{grid-template-columns:1fr 1fr 1fr}.unit-mini-stat{padding:8px}.unit-mini-stat b{font-size:16px}}
   .version-badge{
     position:fixed;
     top:10px;
@@ -276,23 +288,25 @@
     <div>
       <div class="panel">
         <div class="panel-title">1. Cole a planilha <span class="flow-badge">Fluxo recomendado</span></div>
-        <div class="panel-help">Selecione as células no Excel e use Ctrl+C / Ctrl+V. Ao colar, o app já tenta detectar as colunas automaticamente.</div>
-        <textarea id="unitPaste" class="paste-primary" placeholder="Cole aqui: MATRÍCULA, NOME, CPF, DATA DE NASCIMENTO, TELEFONE, EMAIL, UNIDADE…"></textarea>
+        <div class="panel-help">Cole direto do Excel, inclusive relatórios com NÚMEROPM, Batalhão e ORIGEM SEI. O mapeamento identifica automaticamente as colunas conhecidas.</div>
+        <textarea id="unitPaste" class="paste-primary" placeholder="Cole aqui a tabela do Excel, incluindo a primeira linha com títulos. Ex.: SOLICITAÇÃO, Posto/Graduação, Nome Completo, NÚMEROPM, CPF, E-mail, Batalhão, Telefone, ORIGEM SEI…"></textarea>
         <div class="button-row" style="margin-top:10px">
           <button class="btn" id="unitAnalyze">Analisar colagem</button>
           <button class="btn secondary" id="unitClipboard">📋 Colar da área de transferência</button>
           <button class="btn secondary" id="unitProcess">Gerar arquivos por unidade</button>
         </div>
-        <div id="unitFlowStatus" class="status-line">Aguardando dados.</div>
+        <div id="unitFlowStatus" class="status-line" role="status" aria-live="polite">Aguardando dados.</div>
+        <div class="unit-analysis-stats hidden" id="unitAnalysisStats" aria-live="polite"></div>
         <div class="divider"></div>
-        <div class="panel-help" style="margin-bottom:6px">Se preferir, carregue um CSV:</div>
-        <div class="drop-secondary"><input id="unitFile" type="file" accept=".csv,text/csv,.txt"></div>
+        <div class="panel-help" style="margin-bottom:6px">Ou envie uma planilha Excel (.xlsx, .xls), CSV, TSV ou TXT:</div>
+        <div class="drop-secondary"><input id="unitFile" type="file" accept=".csv,text/csv,.tsv,text/tab-separated-values,.txt,.xlsx,.xls"></div>
       </div>
 
       <div id="analyzeResult" class="panel hidden" style="margin-top:12px">
         <div class="panel-title">Confira o mapeamento automático</div>
         <div class="panel-help">Ajuste somente se alguma coluna tiver sido identificada incorretamente.</div>
         <div id="mappingArea" class="mapping-grid"></div>
+        <div id="unitMappingNotice" class="column-warning" role="status"></div>
       </div>
 
       <div id="unitColumnsPanel" class="panel" style="margin-top:12px">
@@ -330,9 +344,9 @@
 
     <div>
       <div class="panel" style="position:sticky;top:84px">
-        <div class="panel-title">Prévia dos dados</div>
-        <div class="panel-help">As primeiras linhas aparecem aqui para você validar a colagem antes de gerar.</div>
-        <div id="unitPreview" class="preview" style="min-height:360px;max-height:560px;overflow:auto">Sem dados</div>
+        <div class="panel-title">Prévia dos dados <span class="unit-preview-pill">amostra de 8 registros</span></div>
+        <div class="panel-help">Somente uma amostra aparece na tela, mesmo com milhares de linhas.</div>
+        <div id="unitPreview" class="unit-preview-table" style="min-height:160px;max-height:560px;overflow:auto">Sem dados</div>
       </div>
     </div>
   </div>
@@ -567,12 +581,14 @@ function parseCSVGeneric(text){
   });
 
   pasteArea.addEventListener('paste',()=>{
+    parsedCSV=null;inputVersion++;
     setTimeout(()=>{ const count=pasteArea.value.split(/\r?\n/).filter(x=>x.trim()).length; pasteStatus.textContent=`Colagem detectada: ${count} linha(s). Clique em “Adicionar colagem”.`; },60);
   });
 
   if(clipboardBtn) clipboardBtn.addEventListener('click',async()=>{
     try{
       pasteArea.value=await navigator.clipboard.readText();
+      parsedCSV=null;inputVersion++;
       pasteArea.dispatchEvent(new Event('paste'));
       pasteArea.focus();
     }catch(e){ pasteStatus.textContent='O navegador bloqueou a leitura automática. Use CTRL+V na caixa acima.'; pasteArea.focus(); }
@@ -642,30 +658,72 @@ function parseCSVGeneric(text){
   const flowStatus = document.getElementById('unitFlowStatus');
 
   let parsedCSV = null; let delimiterUsed = ','; let dataStartIndex = 0;
+  const analysisStats=document.getElementById('unitAnalysisStats');
+  const mappingNotice=document.getElementById('unitMappingNotice');
+  let inputVersion=0;
 
-  // Parse robust: accepts TAB (Excel), comma, semicolon, pipe
+  // TSV colado do Excel e CSV: leitura linear, sem construir milhares de linhas na interface.
   function parseCSVForUnit(text){
-    if(!text) return [];
-    const clean = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-    // If has TAB -> treat as TSV (Excel)
-    if(clean.indexOf('\t') !== -1){
-      return clean.split('\n').filter(l=>l.trim()!=='').map(l=>l.split('\t'));
-    }
-    // otherwise detect delimiter
-    const lines = clean.split('\n').filter(l=>l.trim()!=='');
-    const sample = lines.slice(0, Math.min(20, lines.length));
-    const delim = detectDelimiter(sample);
-    return lines.map(l=>parseLineCSV(l, delim));
+    if(!text)return [];
+    const clean=text.replace(/^\uFEFF/,'').replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+    const lines=clean.split('\n').filter(l=>l.trim()!=='');
+    if(!lines.length)return [];
+    const delim=detectDelimiter(lines.slice(0,Math.min(12,lines.length)));
+    delimiterUsed=delim;
+    return lines.map(l=>parseLineCSV(l,delim));
+  }
+  function loadXLSXLibrary(){
+    if(window.XLSX)return Promise.resolve(window.XLSX);
+    if(window._unitXLSXPromise)return window._unitXLSXPromise;
+    window._unitXLSXPromise=new Promise((resolve,reject)=>{
+      const script=document.createElement('script');
+      script.src='https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
+      script.onload=()=>window.XLSX?resolve(window.XLSX):reject(new Error('Biblioteca indisponível'));
+      script.onerror=()=>reject(new Error('Não foi possível carregar o leitor de Excel. Verifique sua conexão.'));
+      document.head.appendChild(script);
+    }).catch(error=>{window._unitXLSXPromise=null;throw error;});
+    return window._unitXLSXPromise;
+  }
+  function renderUnitPreview(){
+    const fragment=document.createDocumentFragment(),table=document.createElement('table');
+    const thead=document.createElement('thead'),tbody=document.createElement('tbody');
+    const first=parsedCSV?.[0]||[];
+    const columnCount=Math.min(first.length,30);
+    const titles=dataStartIndex?first:Array.from({length:columnCount},(_,i)=>'Coluna '+(i+1));
+    const tr=document.createElement('tr');
+    titles.slice(0,columnCount).forEach(title=>{const th=document.createElement('th');th.textContent=title;tr.appendChild(th);});
+    thead.appendChild(tr);
+    parsedCSV.slice(dataStartIndex,dataStartIndex+8).forEach(row=>{
+      const tr=document.createElement('tr');
+      for(let i=0;i<columnCount;i++){const td=document.createElement('td');td.textContent=row[i]??'';td.title=String(row[i]??'').slice(0,150);tr.appendChild(td);}
+      tbody.appendChild(tr);
+    });
+    table.append(thead,tbody);fragment.appendChild(table);preview.replaceChildren(fragment);
   }
 
-  fileInput.addEventListener('change', async e=>{
-    const f=e.target.files[0];
-    if(!f) return;
+  fileInput.addEventListener('change',async e=>{
+    const file=e.target.files[0];if(!file)return;
+    inputVersion++;
+    flowStatus.textContent='Lendo '+file.name+'…';
     try{
-      pasteArea.value=decodeTextBuffer(await f.arrayBuffer());
-      flowStatus.textContent=`Arquivo “${f.name}” carregado. Analisando colunas…`;
-      setTimeout(()=>analyzeBtn.click(),30);
-    }catch(err){ alert('Não foi possível ler o arquivo.'); }
+      if(/\.xlsx?$/i.test(file.name)){
+        const XLSX=await loadXLSXLibrary();
+        const workbook=XLSX.read(await file.arrayBuffer(),{type:'array',cellDates:false});
+        if(!workbook.SheetNames.length)throw new Error('Nenhuma aba encontrada.');
+        const sheet=workbook.Sheets[workbook.SheetNames[0]];
+        parsedCSV=XLSX.utils.sheet_to_json(sheet,{header:1,defval:'',raw:false,blankrows:false});
+        // Força texto para preservar a exibição de datas e zeros à esquerda quando já formatados no Excel.
+        parsedCSV=parsedCSV.map(row=>row.map(value=>String(value??'')));
+        pasteArea.value='';
+        flowStatus.textContent='Planilha '+file.name+' carregada (primeira aba: '+workbook.SheetNames[0]+').';
+        analyzeBtn.click();
+      }else{
+        pasteArea.value=decodeTextBuffer(await file.arrayBuffer());
+        parsedCSV=null;
+        flowStatus.textContent='Arquivo '+file.name+' carregado.';
+        analyzeBtn.click();
+      }
+    }catch(error){flowStatus.textContent='Falha na leitura: '+error.message;alert('Não foi possível ler a planilha: '+error.message);}
   });
 
   pasteArea.addEventListener('paste',()=>{
@@ -687,13 +745,13 @@ function parseCSVGeneric(text){
     const header = (headerText||'').toLowerCase();
     let score = {masp:0, nome:0, cpf:0, nascimento:0, telefone:0, email:0, unidade:0};
     // header cues
-    if(/masp|matr|matricul|rg|registro/.test(header)) score.masp += 10;
+    if(/masp|matr|matricul|rg|registro|numeropm|numero.?pm/.test(header)) score.masp += 10;
     if(/nasc|birth/.test(header)) score.nascimento += 18;
     if(/nome|nomecompleto|full ?name/.test(header)) score.nome += 10;
     if(/cpf/.test(header)) score.cpf += 10;
     if(/tel|cel|celular|fone|telefone/.test(header)) score.telefone += 10;
     if(/email|e-?mail/.test(header)) score.email += 10;
-    if(/unid|setor|depart|lotação|lotacao|local|org|orgao/.test(header)) score.unidade += 10;
+    if(/unid|setor|depart|lotação|lotacao|local|org|orgao|batalh|\bbpm\b/.test(header)) score.unidade += 10;
 
     // sample content cues
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -712,7 +770,7 @@ function parseCSVGeneric(text){
       // names: if contains spaces and letters-only
       if(/^[A-Za-zÀ-ú'\.\- ]+$/.test(val) && val.split(' ').length>=2) textNameLikeCount++;
       // unidade: often contains words like 'CET', 'SETRAN', 'NÚCLEO' or numbers + text
-      if(/\b(cet|setran|nucleo|núcleo|regional|sede|posto|unidade)\b/i.test(val)) score.unidade += 4;
+      if(/\b(cet|setran|nucleo|núcleo|regional|sede|posto|unidade|bpm)\b/i.test(val)) score.unidade += 4;
     }
     if(textNameLikeCount >= 3) score.nome += 6;
     return score;
@@ -721,18 +779,19 @@ function parseCSVGeneric(text){
   // Choose best mapping for columns using header + sample
   function autoMapColumns(parsed){
     const firstRow = parsed[0] || [];
-    const sampleRows = parsed.slice( dataStartIndex || 1, Math.min(parsed.length, 50) );
+    const sampleRows = parsed.slice(dataStartIndex,Math.min(parsed.length,dataStartIndex+12));
     const mapGuess = {}; // field -> colIndex
     const scoresPerCol = [];
 
     for(let c=0;c<firstRow.length;c++){
       const h = firstRow[c] || '';
-      scoresPerCol[c] = scoreColumn(c, h, parsed);
+      scoresPerCol[c] = scoreColumn(c, h, sampleRows);
     }
     const fields = ['cpf','masp','nome','nascimento','email','telefone','unidade'];
     fields.forEach(field=>{
       let bestIdx = -1; let bestScore = -1;
       for(let c=0;c<scoresPerCol.length;c++){
+        if(Object.values(mapGuess).includes(c))continue;
         const s = scoresPerCol[c][field] || 0;
         if(s>bestScore){ bestScore=s; bestIdx=c; }
       }
@@ -743,22 +802,17 @@ function parseCSVGeneric(text){
 
   analyzeBtn.addEventListener('click', ()=>{
     const text = pasteArea.value || '';
-    if(!text.trim()){ alert('Cole o conteúdo do CSV ou selecione o arquivo primeiro.'); return; }
+    if(!text.trim()&&!parsedCSV){ alert('Cole os dados ou selecione uma planilha primeiro.'); return; }
 
-    parsedCSV = parseCSVForUnit(text);
+    if(!parsedCSV)parsedCSV = parseCSVForUnit(text);
     if(parsedCSV.length===0){ alert('Não foi possível processar o CSV'); return; }
 
-    // detect delimiter used
-    if(text.indexOf('\t')!==-1) delimiterUsed = '\t';
-    else {
-      const lines = text.split('\n').filter(l=>l.trim()!=='').slice(0,20);
-      delimiterUsed = detectDelimiter(lines);
-    }
+    // O delimitador é identificado pelo parser, independente do número de registros.
 
     const firstRow = parsedCSV[0].map(c=>String(c).trim());
     // header detection: if many non-numeric -> treat as header
     const normalized = firstRow.map(n=> normalizeHeaderName(n) );
-    const looksHeader = normalized.some(n=> ['nome','masp','matricula','cpf','datanascimento','nascimento','email','unidade','celular','telefone'].includes(n));
+    const looksHeader = normalized.some(n=> ['nome','nomecompleto','masp','matricula','numeropmsomentenumeros','numeropm','cpf','cpfsomentenumeros','datanascimento','nascimento','email','unidade','celular','telefone','telefonecomddd','batalhaosomenteasede','origemsei','solicitacao'].includes(n));
     dataStartIndex = looksHeader ? 1 : 0;
 
     // auto-map using heuristics
@@ -774,7 +828,7 @@ function parseCSVGeneric(text){
       {key:'telefone', label:'TELEFONE / CELULAR'},
       {key:'email', label:'EMAIL'},
       {key:'unidade', label:'UNIDADE (agrupamento)'},
-      {key:'ignore', label:'IGNORAR'}
+      {key:'ignore', label:'IGNORAR / OUTROS DADOS'}
     ];
 
     for(let i=0;i<firstRow.length;i++){
@@ -798,13 +852,13 @@ function parseCSVGeneric(text){
       else if(autoMap.unidade === i) sel.value='unidade';
       else {
         const norm = normalizeHeaderName(colName);
-        if(norm.includes('masp')) sel.value='masp';
+        if(norm.includes('masp')||norm.includes('numeropm')||norm.includes('matricula')) sel.value='masp';
         else if(norm.includes('nome')) sel.value='nome';
         else if(norm.includes('cpf')) sel.value='cpf';
         else if(norm.includes('nasc')) sel.value='nascimento';
         else if(norm.includes('celular')||norm.includes('telefone')) sel.value='telefone';
         else if(norm.includes('email')) sel.value='email';
-        else if(norm.includes('unidade')||norm.includes('setor')||norm.includes('depart')) sel.value='unidade';
+        else if(norm.includes('unidade')||norm.includes('setor')||norm.includes('depart')||norm.includes('batalhao')) sel.value='unidade';
         else sel.value='ignore';
       }
 
@@ -812,9 +866,13 @@ function parseCSVGeneric(text){
     }
 
     analyzeResult.classList.remove('hidden');
-    preview.textContent = parsedCSV.slice(0,8).map(r=> r.join(delimiterUsed)).join('\n');
+    renderUnitPreview();
+    const sampleUnits=new Set(parsedCSV.slice(dataStartIndex).map(row=>row[mappingArea.querySelectorAll('select') ? Array.from(mappingArea.querySelectorAll('select')).findIndex(sel=>sel.value==='unidade') : -1]).filter(Boolean));
+    analysisStats.innerHTML='<div class="unit-mini-stat"><b>'+Math.max(0,parsedCSV.length-dataStartIndex).toLocaleString('pt-BR')+'</b><span>REGISTROS</span></div><div class="unit-mini-stat"><b>'+sampleUnits.size.toLocaleString('pt-BR')+'</b><span>UNIDADES</span></div><div class="unit-mini-stat"><b>'+firstRow.length+'</b><span>COLUNAS RECEBIDAS</span></div>';
+    analysisStats.classList.remove('hidden');
+    mappingNotice.textContent=Array.from(mappingArea.querySelectorAll('select')).some(sel=>sel.value==='nascimento')?'':'A planilha não contém data de nascimento. Desmarque esse campo na exportação, ou informe a coluna correspondente. Nenhum valor será inventado.';
     resultBlock.classList.add('hidden');
-    flowStatus.textContent = `${parsedCSV.length-dataStartIndex} registro(s) detectados. Confira o mapeamento e gere os arquivos.`;
+    flowStatus.textContent = `${(parsedCSV.length-dataStartIndex).toLocaleString('pt-BR')} registro(s) detectados. Confira o mapeamento e gere os arquivos.`;
   });
 
   // Exportação por unidade no padrão usuarios-lote (CSV UTF-8, vírgulas e cabeçalho).
